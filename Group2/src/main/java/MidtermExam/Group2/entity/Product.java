@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -41,24 +41,24 @@ public class Product {
     private Status status;
 
     @Column(name = "created_time", nullable = false, updatable = false)
-    private LocalDate createdTime;
+    private LocalDateTime createdTime;
 
     @Column(name = "updated_time", nullable = false)
-    private LocalDate updatedTime;
+    private LocalDateTime updatedTime;
 
     @PrePersist
     public void prePersist() {
         if (createdTime == null) {
-            createdTime = LocalDate.now();
+            createdTime = LocalDateTime.now();
         }
         if (updatedTime == null) {
-            updatedTime = LocalDate.now();
+            updatedTime = LocalDateTime.now();
         }
     }
 
     @PreUpdate
     public void preUpdate() {
-        updatedTime = LocalDate.now();
+        updatedTime = LocalDateTime.now();
     }
 
     // @OneToMany(fetch = FetchType.LAZY, mappedBy = "products", cascade =
