@@ -5,6 +5,7 @@ import MidtermExam.Group2.entity.Product;
 import MidtermExam.Group2.entity.Status;
 import MidtermExam.Group2.mapper.ProductMapper;
 import MidtermExam.Group2.repository.ProductRepository;
+import MidtermExam.Group2.service.ProductService;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class ProductServiceImpl {
+public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
 
@@ -31,21 +32,25 @@ public class ProductServiceImpl {
         this.productMapper = productMapper;
     }
 
+    @Override
     public Page<ProductDTO> getAllProducts(Pageable pageable) {
         return productRepository.findAll(pageable).map(productMapper::toDTO);
     }
 
+    @Override
     public Optional<ProductDTO> getProductById(UUID id) {
         return productRepository.findById(id)
                 .map(productMapper::toDTO);
     }
 
+    @Override
     public ProductDTO createProduct(ProductDTO productDTO) {
         Product product = productMapper.toEntity(productDTO);
         product = productRepository.save(product);
         return productMapper.toDTO(product);
     }
 
+    @Override
     public Optional<ProductDTO> updateProduct(UUID id, ProductDTO productDTO) {
         Optional<Product> existingProduct = productRepository.findById(id);
         if (existingProduct.isPresent()) {
@@ -58,6 +63,7 @@ public class ProductServiceImpl {
         }
     }
 
+    @Override
     public Optional<ProductDTO> toggleProductStatus(UUID id) {
         Optional<Product> existingProduct = productRepository.findById(id);
         if (existingProduct.isPresent()) {
@@ -70,10 +76,11 @@ public class ProductServiceImpl {
         }
     }
 
+    @Override
     public void deleteProduct(UUID id) {
         productRepository.deleteById(id);
     }
-
+    @Override
     public void importProductsFromCsv(MultipartFile file) throws IOException {
         try (CSVReader csvReader = new CSVReader(new InputStreamReader(file.getInputStream()))) {
             List<String[]> rows = csvReader.readAll();
@@ -92,4 +99,20 @@ public class ProductServiceImpl {
             throw new IOException("Failed to read CSV file", e);
         }
     }
+
+    @Override
+    public Page<ProductDTO> searchProducts(String name, Status status, Pageable pageable) {
+        Page<Product> products;
+        if (name != null && status != null) {
+            products = productRepository.findByNameContainingIgnoreCaseAndStatus(name, status, pageable);
+        } else if (name != null) {
+            products = productRepository.findByNameContainingIgnoreCase(name, pageable);
+        } else if (status != null) {
+            products = productRepository.findByStatus(status, pageable);
+        } else {
+            products = productRepository.findAll(pageable);
+        }
+        return products.map(productMapper::toDTO);
+    }
+
 }

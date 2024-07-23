@@ -1,6 +1,7 @@
 package MidtermExam.Group2.service;
 
 import MidtermExam.Group2.dto.ProductDTO;
+import MidtermExam.Group2.entity.Status;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,4 +25,6 @@ public interface ProductService {
     void deleteProduct(UUID id);
 
     void importProductsFromCsv(MultipartFile file) throws IOException;
+
+    public Page<ProductDTO> searchProducts(String name, Status status, Pageable pageable);
 }
