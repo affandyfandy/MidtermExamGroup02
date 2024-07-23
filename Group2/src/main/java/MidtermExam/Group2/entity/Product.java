@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,7 +24,7 @@ public class Product {
 
     @Id
     @GeneratedValue
-    @Column(name = "id",columnDefinition = "BINARY(16)")
+    @Column(name = "id", columnDefinition = "BINARY(16)")
     private UUID id;
 
     @NotBlank(message = "Name is mandatory")
@@ -32,7 +32,7 @@ public class Product {
     private String name;
 
     @NotNull(message = "Price is mandatory")
-    @Column(name = "price",nullable = false, precision = 10, scale = 2)
+    @Column(name = "price", nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
 
     @NotNull(message = "Status is mandatory")
@@ -40,29 +40,28 @@ public class Product {
     @Column(name = "status", nullable = false, length = 20)
     private Status status;
 
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_time", nullable = false, updatable = false)
-    private Date createdTime;
+    private LocalDate createdTime;
 
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "updated_time", nullable = false)
-    private Date updatedTime;
+    private LocalDate updatedTime;
 
     @PrePersist
     public void prePersist() {
         if (createdTime == null) {
-            createdTime = new Date();
+            createdTime = LocalDate.now();
         }
         if (updatedTime == null) {
-            updatedTime = new Date();
+            updatedTime = LocalDate.now();
         }
     }
 
     @PreUpdate
     public void preUpdate() {
-        updatedTime = new Date();
+        updatedTime = LocalDate.now();
     }
 
-    //    @OneToMany(fetch = FetchType.LAZY, mappedBy = "products", cascade = CascadeType.ALL)
-    //    private List<InvoiceProduct> invoiceProducts = new ArrayList<>();
+    // @OneToMany(fetch = FetchType.LAZY, mappedBy = "products", cascade =
+    // CascadeType.ALL)
+    // private List<InvoiceProduct> invoiceProducts = new ArrayList<>();
 }
