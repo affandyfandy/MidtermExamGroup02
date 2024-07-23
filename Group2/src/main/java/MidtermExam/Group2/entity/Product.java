@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -42,25 +42,25 @@ public class Product {
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_time", nullable = false, updatable = false)
-    private Date createdTime;
+    private LocalDate createdTime;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "updated_time", nullable = false)
-    private Date updatedTime;
+    private LocalDate updatedTime;
 
     @PrePersist
     public void prePersist() {
         if (createdTime == null) {
-            createdTime = new Date();
+            createdTime = LocalDate.now();
         }
         if (updatedTime == null) {
-            updatedTime = new Date();
+            updatedTime = LocalDate.now();
         }
     }
 
     @PreUpdate
     public void preUpdate() {
-        updatedTime = new Date();
+        updatedTime = LocalDate.now();
     }
 
     //    @OneToMany(fetch = FetchType.LAZY, mappedBy = "products", cascade = CascadeType.ALL)
