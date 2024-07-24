@@ -23,8 +23,14 @@ public interface InvoiceRepository extends JpaRepository<Invoice, UUID>, JpaSpec
     @Query("SELECT i FROM Invoice i JOIN FETCH i.customer JOIN FETCH i.invoiceProducts")
     Page<Invoice> findAll(Pageable pageable);
 
+    /**
+     * Find invoice by id
+     * 
+     * @param id invoice id
+     * @return invoice
+     */
     @Query("SELECT i FROM Invoice i JOIN FETCH i.customer JOIN FETCH i.invoiceProducts WHERE i.id = :id")
-    Page<Invoice> findInvoiceById(UUID id, Pageable pageable);
+    Invoice findInvoiceById(UUID id);
 
     List<Invoice> findByCustomerId(UUID customerId);
 

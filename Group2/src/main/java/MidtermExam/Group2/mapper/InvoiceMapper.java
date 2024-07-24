@@ -1,11 +1,11 @@
 package MidtermExam.Group2.mapper;
 
+import MidtermExam.Group2.dto.InvoiceDTO;
 import MidtermExam.Group2.dto.InvoiceDetailDTO;
 import MidtermExam.Group2.dto.InvoiceListDTO;
 import MidtermExam.Group2.entity.Invoice;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.Mappings;
 
 @Mapper(componentModel = "spring", uses = { CustomerMapper.class, InvoiceProductMapper.class })
 public interface InvoiceMapper {
@@ -17,6 +17,15 @@ public interface InvoiceMapper {
     // to do
 
     Invoice toInvoice(InvoiceListDTO invoiceDTO);
+
+    // For invoice
+    @Mapping(source = "customer.id", target = "customerId")
+    InvoiceDTO toInvoicesDTO(Invoice invoice);
+
+    // Invoice Detail Mapper here
+    // to do
+
+    Invoice toInvoices(InvoiceDTO invoiceDTO);
 
     @Mapping(source = "invoice.id", target = "invoiceId")
     @Mapping(source = "customer", target = "customer")

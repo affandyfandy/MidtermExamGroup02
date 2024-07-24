@@ -15,10 +15,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ProductDTO {
     private UUID id;
-    @NotBlank(message = "Name is mandatory")
-    @Pattern(regexp = "^[A-Za-z ]+$", message = "Name must contain only letters and spaces")
     private String name;
-    @NotNull(message = "Price is mandatory")
     private BigDecimal price;
     private String status;
 }

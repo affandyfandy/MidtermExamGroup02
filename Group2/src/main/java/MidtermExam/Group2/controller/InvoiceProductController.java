@@ -1,16 +1,18 @@
 package MidtermExam.Group2.controller;
 
+import MidtermExam.Group2.dto.InvoiceListDTO;
 import MidtermExam.Group2.dto.InvoiceProductDTO;
 import MidtermExam.Group2.service.InvoiceProductService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/invoice-products")
@@ -25,5 +27,17 @@ public class InvoiceProductController {
     @GetMapping
     public ResponseEntity<Page<InvoiceProductDTO>> getAllInvoiceProducts(Pageable pageable) {
         return ResponseEntity.ok(invoiceProductService.getAllInvoiceProducts(pageable));
+    }
+
+    @PostMapping
+    public ResponseEntity<InvoiceProductDTO> addInvoiceProduct(@Valid @RequestBody InvoiceProductDTO invoiceProductDTO) {
+        InvoiceProductDTO addedInvoiceProduct = invoiceProductService.addInvoiceProduct(invoiceProductDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(addedInvoiceProduct);
+    }
+
+    @PutMapping("/{invoiceId}/{productId}")
+    public ResponseEntity<InvoiceProductDTO> editInvoiceProduct(@PathVariable("invoiceId") UUID invoiceId, @PathVariable("productId") UUID productId, @Valid @RequestBody InvoiceProductDTO invoiceProductDTO) {
+        InvoiceProductDTO editedInvoiceProduct = invoiceProductService.editInvoiceProduct(invoiceProductDTO, invoiceId, productId);
+        return ResponseEntity.ok(editedInvoiceProduct);
     }
 }
