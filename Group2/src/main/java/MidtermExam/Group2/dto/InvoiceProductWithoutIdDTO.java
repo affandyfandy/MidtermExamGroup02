@@ -8,22 +8,16 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class InvoiceProductDTO {
+public class InvoiceProductWithoutIdDTO {
 
     @NotNull(message = "Invoice id cannot be null")
     private UUID invoiceId;
-
-    @NotNull(message = "Product id cannot be null")
-    private UUID productId;
 
     @NotNull(message = "Product name cannot be null")
     private String productName;

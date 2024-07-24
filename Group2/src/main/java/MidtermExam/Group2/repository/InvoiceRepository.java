@@ -1,6 +1,8 @@
 package MidtermExam.Group2.repository;
 
 import MidtermExam.Group2.entity.Invoice;
+
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,6 +16,7 @@ import java.util.UUID;
 public interface InvoiceRepository extends JpaRepository<Invoice, UUID>, JpaSpecificationExecutor<Invoice> {
     /**
      * Find all invoices with pagination
+     * 
      * @param pageable pagination information
      * @return page of invoices
      */
@@ -22,4 +25,7 @@ public interface InvoiceRepository extends JpaRepository<Invoice, UUID>, JpaSpec
 
     @Query("SELECT i FROM Invoice i JOIN FETCH i.customer JOIN FETCH i.invoiceProducts WHERE i.id = :id")
     Page<Invoice> findInvoiceById(UUID id, Pageable pageable);
+
+    List<Invoice> findByCustomerId(UUID customerId);
+
 }

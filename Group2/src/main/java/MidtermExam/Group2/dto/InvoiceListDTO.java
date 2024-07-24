@@ -2,7 +2,10 @@ package MidtermExam.Group2.dto;
 
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
@@ -11,8 +14,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-@Getter
-@Setter
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class InvoiceListDTO {
 
     @NotNull(message = "Invoice id cannot be null")
@@ -26,6 +30,6 @@ public class InvoiceListDTO {
     private String customerName;
 
     @NotNull(message = "Invoice date cannot be null")
-    private LocalDateTime invoiceDate;
-}
+    private LocalDate invoiceDate;
 
+}

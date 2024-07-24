@@ -12,7 +12,7 @@ import java.util.UUID;
 public class InvoiceSearchCriteria {
     private String customerName;
     private UUID customerId;
-    private LocalDateTime invoiceDate;
+    private LocalDate invoiceDate;
     private String month;
     private String sortBy;
     private boolean sortAsc;
@@ -33,11 +33,11 @@ public class InvoiceSearchCriteria {
         this.customerId = customerId;
     }
 
-    public LocalDateTime getInvoiceDate() {
+    public LocalDate getInvoiceDate() {
         return invoiceDate;
     }
 
-    public void setInvoiceDate(LocalDateTime invoiceDate) {
+    public void setInvoiceDate(LocalDate invoiceDate) {
         this.invoiceDate = invoiceDate;
     }
 

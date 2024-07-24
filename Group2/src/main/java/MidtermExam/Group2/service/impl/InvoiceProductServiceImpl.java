@@ -1,6 +1,7 @@
 package MidtermExam.Group2.service.impl;
 
 import MidtermExam.Group2.dto.InvoiceProductDTO;
+import MidtermExam.Group2.entity.InvoiceProduct;
 import MidtermExam.Group2.mapper.InvoiceProductMapper;
 import MidtermExam.Group2.repository.InvoiceProductRepository;
 import MidtermExam.Group2.service.InvoiceProductService;
@@ -17,7 +18,8 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
     private final InvoiceProductMapper invoiceProductMapper;
 
     @Autowired
-    public InvoiceProductServiceImpl(InvoiceProductRepository invoiceProductRepository, InvoiceProductMapper invoiceProductMapper) {
+    public InvoiceProductServiceImpl(InvoiceProductRepository invoiceProductRepository,
+            InvoiceProductMapper invoiceProductMapper) {
         this.invoiceProductRepository = invoiceProductRepository;
         this.invoiceProductMapper = invoiceProductMapper;
     }
@@ -25,4 +27,5 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
     public Page<InvoiceProductDTO> getAllInvoiceProducts(Pageable pageable) {
         return invoiceProductRepository.findAll(pageable).map(invoiceProductMapper::toInvoiceProductDTO);
     }
+
 }
