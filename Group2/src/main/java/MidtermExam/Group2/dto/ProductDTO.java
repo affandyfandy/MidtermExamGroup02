@@ -1,22 +1,19 @@
 package MidtermExam.Group2.dto;
 
-import MidtermExam.Group2.entity.Status;
-import lombok.*;
-
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.UUID;
+import lombok.Data;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@Data
 public class ProductDTO {
     private UUID id;
+    @NotBlank(message = "Name is mandatory")
+    @Pattern(regexp = "^[A-Za-z ]+$", message = "Name must contain only letters and spaces")
     private String name;
+    @NotNull(message = "Price is mandatory")
     private BigDecimal price;
-    private Status status;
-    private LocalDate created_at;
-    private LocalDate updated_at;
+    private String status;
 }
