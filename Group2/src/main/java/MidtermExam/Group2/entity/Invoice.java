@@ -7,6 +7,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -34,27 +35,27 @@ public class Invoice {
 
     @NotNull(message = "Invoice date cannot be null")
     @Column(name = "invoice_date", nullable = false)
-    private LocalDate invoiceDate;
+    private LocalDateTime invoiceDate;
 
     @NotNull(message = "Created at cannot be null")
-    @Column(name = "created_at", nullable = false)
-    private LocalDate createdAt;
+    @Column(name = "created_time", nullable = false)
+    private LocalDateTime createdTime;
 
     @NotNull(message = "Updated at cannot be null")
-    @Column(name = "updated_at", nullable = false)
-    private LocalDate updatedAt;
+    @Column(name = "updated_time", nullable = false)
+    private LocalDateTime updatedTime;
 
     @OneToMany(mappedBy = "invoice", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<InvoiceProduct> invoiceProducts;
 
     @PrePersist
     public void prePersist() {
-        this.createdAt = LocalDate.now();
-        this.updatedAt = LocalDate.now();
+        this.createdTime = LocalDateTime.now();
+        this.updatedTime = LocalDateTime.now();
     }
 
     @PreUpdate
     public void preUpdate() {
-        this.updatedAt = LocalDate.now();
+        this.updatedTime = LocalDateTime.now();
     }
 }

@@ -1,21 +1,21 @@
 package MidtermExam.Group2.dto;
 
-import MidtermExam.Group2.entity.Status;
-import lombok.*;
-
-import java.time.LocalDate;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import java.util.UUID;
+import lombok.Data;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@Data
 public class CustomerDTO {
+
     private UUID id;
+
+    @NotBlank(message = "Name cannot be blank")
     private String name;
+
+    @Pattern(regexp = "^\\+62\\d{9,13}$", message = "Phone must be a valid Indonesian number starting with +62")
     private String phoneNumber;
-    private Status status;
-    private LocalDate createdAt;
-    private LocalDate updatedAt;
+
+    private String status;
+
 }

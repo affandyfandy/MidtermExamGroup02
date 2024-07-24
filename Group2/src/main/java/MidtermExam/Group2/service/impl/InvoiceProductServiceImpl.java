@@ -5,10 +5,11 @@ import MidtermExam.Group2.mapper.InvoiceProductMapper;
 import MidtermExam.Group2.repository.InvoiceProductRepository;
 import MidtermExam.Group2.service.InvoiceProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class InvoiceProductServiceImpl implements InvoiceProductService {
@@ -21,10 +22,7 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
         this.invoiceProductMapper = invoiceProductMapper;
     }
 
-    public List<InvoiceProductDTO> getAllInvoiceProducts() {
-        return invoiceProductRepository.findAll()
-                .stream()
-                .map(invoiceProductMapper::toInvoiceProductDTO)
-                .toList();
+    public Page<InvoiceProductDTO> getAllInvoiceProducts(Pageable pageable) {
+        return invoiceProductRepository.findAll(pageable).map(invoiceProductMapper::toInvoiceProductDTO);
     }
 }

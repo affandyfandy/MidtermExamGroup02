@@ -1,36 +1,64 @@
 package MidtermExam.Group2.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
-
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 
+@Data
 @Entity
-@Table(name = "products")
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@Table(name = "products")
+@Validated
 public class Product {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue
+    @Column(name = "id", columnDefinition = "BINARY(16)")
     private UUID id;
 
-    @Column(name = "name")
+    @NotBlank(message = "Name is mandatory")
+    @Column(name = "name", nullable = false, length = 255)
     private String name;
 
-    @Column(name = "price", precision = 10, scale = 2)
+    @NotNull(message = "Price is mandatory")
+    @Column(name = "price", nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
 
-    @Column(name = "status")
+    @NotNull(message = "Status is mandatory")
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false, length = 20)
     private Status status;
 
-    @Column(name = "created_at")
-    private LocalDate created_at;
+    @Column(name = "created_time", nullable = false, updatable = false)
+    private LocalDateTime createdTime;
 
-    @Column(name = "updated_at")
-    private LocalDate updated_at;
+    @Column(name = "updated_time", nullable = false)
+    private LocalDateTime updatedTime;
+
+    @PrePersist
+    public void prePersist() {
+        if (createdTime == null) {
+            createdTime = LocalDateTime.now();
+        }
+        if (updatedTime == null) {
+            updatedTime = LocalDateTime.now();
+        }
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        updatedTime = LocalDateTime.now();
+    }
+
+    // @OneToMany(fetch = FetchType.LAZY, mappedBy = "products", cascade =
+    // CascadeType.ALL)
+    // private List<InvoiceProduct> invoiceProducts = new ArrayList<>();
 }

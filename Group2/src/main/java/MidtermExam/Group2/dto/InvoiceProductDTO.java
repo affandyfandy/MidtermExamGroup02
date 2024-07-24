@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
@@ -27,10 +28,4 @@ public class InvoiceProductDTO {
     @NotNull(message = "Amount cannot be null")
     @DecimalMin(value = "0.0", inclusive = true, message = "Amount must be greater than or equal to 0")
     private BigDecimal amount;
-
-    @NotNull(message = "Created at cannot be null")
-    private LocalDate createdAt;
-
-    @NotNull(message = "Updated at cannot be null")
-    private LocalDate updatedAt;
 }
