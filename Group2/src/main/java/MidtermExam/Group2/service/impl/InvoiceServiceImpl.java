@@ -1,8 +1,8 @@
 package MidtermExam.Group2.service.impl;
 
 import MidtermExam.Group2.criteria.InvoiceSearchCriteria;
+import MidtermExam.Group2.dto.InvoiceDTO;
 import MidtermExam.Group2.dto.InvoiceListDTO;
-import MidtermExam.Group2.dto.InvoicesDTO;
 import MidtermExam.Group2.entity.Customer;
 import MidtermExam.Group2.entity.Invoice;
 import MidtermExam.Group2.mapper.InvoiceMapper;
@@ -44,8 +44,15 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public InvoicesDTO addInvoice(InvoicesDTO invoicesDTO) {
-        UUID customerId = invoicesDTO.getCustomerId();
+    public InvoiceDTO getInvoiceById(UUID id) {
+        Invoice invoice = invoiceRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invoice not found"));
+        return invoiceMapper.toInvoicesDTO(invoice);
+    }
+
+    @Override
+    public InvoiceDTO addInvoice(InvoiceDTO invoiceDTO) {
+        UUID customerId = invoiceDTO.getCustomerId();
         Optional<Customer> customerOpt = customerRepository.findById(customerId);
         if (customerOpt.isEmpty()) {
             throw new IllegalArgumentException("Customer not found");
@@ -53,9 +60,9 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         Customer customer = customerOpt.get();
 
-        Invoice invoice = invoiceMapper.toInvoices(invoicesDTO);
+        Invoice invoice = invoiceMapper.toInvoices(invoiceDTO);
 
-        LocalDate invoiceDateOnly = invoicesDTO.getInvoiceDate();
+        LocalDate invoiceDateOnly = invoiceDTO.getInvoiceDate();
         invoice.setInvoiceDate(LocalDateTime.of(invoiceDateOnly, LocalTime.MIDNIGHT));
 
         if (invoice.getInvoiceAmount() == null) {
@@ -65,6 +72,26 @@ public class InvoiceServiceImpl implements InvoiceService {
         invoice.setCustomer(customer);
         invoice.setCreatedTime(LocalDateTime.now());
         invoice.setUpdatedTime(LocalDateTime.now());
+        invoice = invoiceRepository.save(invoice);
+        return invoiceMapper.toInvoicesDTO(invoice);
+    }
+
+    @Override
+    public InvoiceDTO editInvoice(UUID id, InvoiceDTO invoiceDTO) {
+        Invoice invoice = invoiceRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invoice not found"));
+
+        // Throw exception if invoice is older than 10 minutes
+        if (invoice.getCreatedTime().plusMinutes(10).isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("Invoice cannot be edited after 10 minutes");
+        }
+
+        Customer customer = customerRepository.findById(invoiceDTO.getCustomerId())
+                .orElseThrow(() -> new IllegalArgumentException("Customer not found"));
+
+        invoice.setCustomer(customer);
+        invoice.setInvoiceDate(LocalDateTime.of(invoiceDTO.getInvoiceDate(), LocalTime.MIDNIGHT));
+
         invoice = invoiceRepository.save(invoice);
         return invoiceMapper.toInvoicesDTO(invoice);
     }

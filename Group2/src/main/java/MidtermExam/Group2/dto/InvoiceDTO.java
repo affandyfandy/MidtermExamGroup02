@@ -1,7 +1,5 @@
 package MidtermExam.Group2.dto;
 
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -11,10 +9,10 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class InvoiceListDTO {
+public class InvoiceDTO {
     private UUID id;
+    private UUID customerId;
     private BigDecimal invoiceAmount;
-    private String customerName;
     private LocalDate invoiceDate;
 }
 
