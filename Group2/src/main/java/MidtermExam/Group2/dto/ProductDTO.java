@@ -5,15 +5,17 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import java.math.BigDecimal;
 import java.util.UUID;
+
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class ProductDTO {
     private UUID id;
-    @NotBlank(message = "Name is mandatory")
-    @Pattern(regexp = "^[A-Za-z ]+$", message = "Name must contain only letters and spaces")
     private String name;
-    @NotNull(message = "Price is mandatory")
     private BigDecimal price;
     private String status;
 }
