@@ -8,6 +8,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "invoice_products")
@@ -42,9 +43,9 @@ public class InvoiceProduct {
 
     @Column(name = "created_at", nullable = false)
     @NotNull(message = "Created at cannot be null")
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
 
     @Column(name = "updated_at", nullable = false)
     @NotNull(message = "Updated at cannot be null")
-    private LocalDate updatedAt;
+    private LocalDateTime updatedAt;
 }

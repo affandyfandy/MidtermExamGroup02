@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,6 +26,6 @@ public class InvoiceListDTO {
     private String customerName;
 
     @NotNull(message = "Invoice date cannot be null")
-    private LocalDate invoiceDate;
+    private LocalDateTime invoiceDate;
 }
 
