@@ -21,6 +21,9 @@ public class InvoiceProductDTO {
     @NotNull(message = "Product id cannot be null")
     private UUID productId;
 
+    @NotNull(message = "Product name cannot be null")
+    private String productName;
+
     @NotNull(message = "Quantity cannot be null")
     @Min(value = 0, message = "Quantity must be greater than or equal to 0")
     private int quantity;

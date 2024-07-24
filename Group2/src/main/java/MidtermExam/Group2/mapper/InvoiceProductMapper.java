@@ -14,12 +14,14 @@ public interface InvoiceProductMapper {
     @Mappings({
             @Mapping(source = "invoice.id", target = "invoiceId"),
             @Mapping(source = "product.id", target = "productId"),
+            @Mapping(source = "product.name", target = "productName"),
     })
     InvoiceProductDTO toInvoiceProductDTO(InvoiceProduct invoiceProduct);
 
     @Mappings({
             @Mapping(source = "invoiceId", target = "invoice.id"),
             @Mapping(source = "productId", target = "product.id"),
+            @Mapping(source = "productName", target = "product.name"),
     })
     InvoiceProduct toInvoiceProduct(InvoiceProductDTO invoiceProductDTO, @Context Invoice invoice, @Context Product product);
 }
