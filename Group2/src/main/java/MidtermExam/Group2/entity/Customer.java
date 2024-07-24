@@ -1,10 +1,5 @@
 package MidtermExam.Group2.entity;
 
-import java.time.LocalDateTime;
-import java.util.UUID;
-
-import org.springframework.validation.annotation.Validated;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -16,9 +11,12 @@ import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import java.time.LocalDateTime;
+import java.util.UUID;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 
 @Data
 @Entity

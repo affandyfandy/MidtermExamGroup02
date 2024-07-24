@@ -62,7 +62,7 @@ public class CustomerController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteCustomer(@PathVariable UUID id) {
         Optional<CustomerDTO> customer = customerService.getCustomerById(id);
-    
+
         if (customer.isPresent()) {
             customerService.deleteCustomer(id);
             return ResponseEntity.ok("Customer record deleted successfully.");

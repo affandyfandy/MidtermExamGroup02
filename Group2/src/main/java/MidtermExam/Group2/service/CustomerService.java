@@ -1,12 +1,11 @@
 package MidtermExam.Group2.service;
 
 import MidtermExam.Group2.dto.CustomerDTO;
+import java.util.Optional;
+import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
-import java.util.UUID;
 
 @Service
 public interface CustomerService {
