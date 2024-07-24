@@ -41,11 +41,22 @@ public class InvoiceProduct {
     @DecimalMin(value = "0.0", inclusive = true, message = "Amount must be greater than or equal to 0")
     private BigDecimal amount;
 
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "created_time", nullable = false)
     @NotNull(message = "Created at cannot be null")
-    private LocalDateTime createdAt;
+    private LocalDateTime createdTime;
 
-    @Column(name = "updated_at", nullable = false)
+    @Column(name = "updated_time", nullable = false)
     @NotNull(message = "Updated at cannot be null")
-    private LocalDateTime updatedAt;
+    private LocalDateTime updatedTime;
+
+    @PrePersist
+    public void prePersist() {
+        this.createdTime = LocalDateTime.now();
+        this.updatedTime = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        this.updatedTime = LocalDateTime.now();
+    }
 }

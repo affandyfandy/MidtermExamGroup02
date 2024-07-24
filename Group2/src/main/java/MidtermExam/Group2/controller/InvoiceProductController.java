@@ -3,6 +3,8 @@ package MidtermExam.Group2.controller;
 import MidtermExam.Group2.dto.InvoiceProductDTO;
 import MidtermExam.Group2.service.InvoiceProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +23,7 @@ public class InvoiceProductController {
     }
 
     @GetMapping
-    public ResponseEntity<List<InvoiceProductDTO>> getAllInvoiceProducts() {
-        return ResponseEntity.ok(invoiceProductService.getAllInvoiceProducts());
+    public ResponseEntity<Page<InvoiceProductDTO>> getAllInvoiceProducts(Pageable pageable) {
+        return ResponseEntity.ok(invoiceProductService.getAllInvoiceProducts(pageable));
     }
 }

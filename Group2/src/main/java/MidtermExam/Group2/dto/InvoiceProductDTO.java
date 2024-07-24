@@ -28,10 +28,4 @@ public class InvoiceProductDTO {
     @NotNull(message = "Amount cannot be null")
     @DecimalMin(value = "0.0", inclusive = true, message = "Amount must be greater than or equal to 0")
     private BigDecimal amount;
-
-    @NotNull(message = "Created at cannot be null")
-    private LocalDateTime createdAt;
-
-    @NotNull(message = "Updated at cannot be null")
-    private LocalDateTime updatedAt;
 }
