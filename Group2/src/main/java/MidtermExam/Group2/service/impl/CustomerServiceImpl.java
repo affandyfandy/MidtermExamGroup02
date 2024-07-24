@@ -63,7 +63,7 @@ public class CustomerServiceImpl implements CustomerService {
         Optional<Customer> existingCustomer = customerRepository.findById(id);
         if (existingCustomer.isPresent()) {
             Customer customer = existingCustomer.get();
-            customer.setStatus(customer.getStatus() == Status.active ? Status.deactive : Status.active);
+            customer.setStatus(customer.getStatus() == Status.ACTIVE ? Status.INACTIVE : Status.ACTIVE);
             customer = customerRepository.save(customer);
             return Optional.of(customerMapper.toDTO(customer));
         } else {
