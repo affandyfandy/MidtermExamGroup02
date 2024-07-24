@@ -11,16 +11,14 @@ import java.util.UUID;
 
 @Getter
 @Setter
-public class InvoiceListDTO {
+public class InvoicesDTO {
 
-    @NotNull(message = "Invoice id cannot be null")
     private UUID id;
+
+    private UUID customerId;
 
     @DecimalMin(value = "0.0", inclusive = true, message = "Invoice amount must be greater than or equal to 0")
     private BigDecimal invoiceAmount;
-
-    @NotNull(message = "Customer name cannot be null")
-    private String customerName;
 
     @NotNull(message = "Invoice date cannot be null")
     private LocalDate invoiceDate;
