@@ -31,6 +31,10 @@ public class InvoiceProduct {
     @NotNull(message = "Product cannot be null")
     private Product product;
 
+    @Column(name = "product_name", nullable = false)
+    @NotNull(message = "Product name cannot be null")
+    private String productName;
+
     @Column(name = "quantity", nullable = false)
     @NotNull(message = "Quantity cannot be null")
     @Min(value = 0, message = "Quantity must be greater than or equal to 0")
