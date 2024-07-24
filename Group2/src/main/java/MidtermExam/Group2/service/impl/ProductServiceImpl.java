@@ -68,7 +68,7 @@ public class ProductServiceImpl implements ProductService {
         Optional<Product> existingProduct = productRepository.findById(id);
         if (existingProduct.isPresent()) {
             Product product = existingProduct.get();
-            product.setStatus(product.getStatus() == Status.active ? Status.deactive : Status.active);
+            product.setStatus(product.getStatus() == Status.ACTIVE ? Status.INACTIVE : Status.ACTIVE);
             product = productRepository.save(product);
             return Optional.of(productMapper.toDTO(product));
         } else {
@@ -80,6 +80,7 @@ public class ProductServiceImpl implements ProductService {
     public void deleteProduct(UUID id) {
         productRepository.deleteById(id);
     }
+
     @Override
     public void importProductsFromCsv(MultipartFile file) throws IOException {
         try (CSVReader csvReader = new CSVReader(new InputStreamReader(file.getInputStream()))) {

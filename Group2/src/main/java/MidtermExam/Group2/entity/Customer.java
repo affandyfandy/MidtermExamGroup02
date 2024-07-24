@@ -1,9 +1,16 @@
 package MidtermExam.Group2.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import java.math.BigDecimal;
+import jakarta.validation.constraints.Pattern;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -13,34 +20,33 @@ import org.springframework.validation.annotation.Validated;
 
 @Data
 @Entity
+@Table(name = "customers")
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "products")
 @Validated
-public class Product {
+public class Customer {
 
     @Id
     @GeneratedValue
     @Column(name = "id", columnDefinition = "BINARY(16)")
     private UUID id;
 
-    @NotBlank(message = "Name is mandatory")
-    @Column(name = "name", nullable = false, length = 255)
+    @NotBlank(message = "Name cannot be blank")
+    @Column(name = "name")
     private String name;
 
-    @NotNull(message = "Price is mandatory")
-    @Column(name = "price", nullable = false, precision = 10, scale = 2)
-    private BigDecimal price;
+    @Pattern(regexp = "^\\+62\\d{9,13}$", message = "Phone must be a valid Indonesian number starting with +62")
+    @Column(name = "phone_number")
+    private String phoneNumber;
 
-    @NotNull(message = "Status is mandatory")
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false, length = 20)
+    @Column(name = "status")
     private Status status;
 
-    @Column(name = "created_time", nullable = false, updatable = false)
+    @Column(name = "created_time")
     private LocalDateTime createdTime;
 
-    @Column(name = "updated_time", nullable = false)
+    @Column(name = "updated_time")
     private LocalDateTime updatedTime;
 
     @PrePersist
@@ -58,7 +64,6 @@ public class Product {
         updatedTime = LocalDateTime.now();
     }
 
-    // @OneToMany(fetch = FetchType.LAZY, mappedBy = "products", cascade =
-    // CascadeType.ALL)
-    // private List<InvoiceProduct> invoiceProducts = new ArrayList<>();
+//    @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+//    private List<Invoice> invoice;
 }
