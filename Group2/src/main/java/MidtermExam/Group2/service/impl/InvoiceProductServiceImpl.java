@@ -115,4 +115,22 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
         return invoiceProductMapper.toInvoiceProductDTO(invoiceProduct);
     }
 
+    @Override
+    public void deleteInvoiceProduct(UUID invoiceId, UUID productId) {
+        InvoiceProduct invoiceProduct = invoiceProductRepository.findById(new InvoiceProductId(invoiceId, productId))
+                .orElseThrow(() -> new IllegalArgumentException("Invoice Product not found"));
+
+        Invoice invoice = invoiceRepository.findById(invoiceId)
+                .orElseThrow(() -> new IllegalArgumentException("Invoice not found"));
+
+        // Throw exception if invoice is older than 10 minutes
+        if (invoice.getCreatedTime().plusMinutes(10).isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("Invoice cannot be edited after 10 minutes");
+        }
+
+        invoice.setInvoiceAmount(invoice.getInvoiceAmount().subtract(invoiceProduct.getAmount()));
+        invoiceRepository.save(invoice);
+
+        invoiceProductRepository.deleteById(new InvoiceProductId(invoiceId, productId));
+    }
 }

@@ -54,4 +54,16 @@ public class InvoiceProductController {
             return ResponseEntity.badRequest().body(response);
         }
     }
+
+    @DeleteMapping("/{invoiceId}/{productId}")
+    public ResponseEntity<?> deleteInvoiceProduct(@PathVariable("invoiceId") UUID invoiceId, @PathVariable("productId") UUID productId) {
+        try {
+            invoiceProductService.deleteInvoiceProduct(invoiceId, productId);
+            return ResponseEntity.ok().build();
+        } catch (RuntimeException e) {
+            Map<String, String> response = new HashMap<>();
+            response.put("errors", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
 }
