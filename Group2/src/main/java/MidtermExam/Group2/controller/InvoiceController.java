@@ -2,9 +2,11 @@ package MidtermExam.Group2.controller;
 
 import MidtermExam.Group2.criteria.InvoiceSearchCriteria;
 import MidtermExam.Group2.dto.InvoiceDTO;
+import MidtermExam.Group2.dto.InvoiceDetailDTO;
 import MidtermExam.Group2.dto.InvoiceListDTO;
 import MidtermExam.Group2.service.InvoiceService;
 import jakarta.validation.Valid;
+import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -41,8 +43,19 @@ public class InvoiceController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<InvoiceDTO> editInvoice(@PathVariable("id") UUID id, @Valid @RequestBody InvoiceDTO invoiceDTO) {
+    public ResponseEntity<InvoiceDTO> editInvoice(@PathVariable("id") UUID id,
+            @Valid @RequestBody InvoiceDTO invoiceDTO) {
         InvoiceDTO editedInvoice = invoiceService.editInvoice(id, invoiceDTO);
         return ResponseEntity.ok(editedInvoice);
+    }
+
+    @GetMapping("/{invoiceId}")
+    public ResponseEntity<InvoiceDetailDTO> getInvoiceDetail(@PathVariable UUID invoiceId) {
+        try {
+            InvoiceDetailDTO invoiceDetail = invoiceService.getInvoiceDetail(invoiceId);
+            return new ResponseEntity<>(invoiceDetail, HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
     }
 }

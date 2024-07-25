@@ -91,7 +91,7 @@ public class ProductServiceImpl implements ProductService {
                     productDTO.setId(UUID.fromString(row[0]));
                     productDTO.setName(row[1]);
                     productDTO.setPrice(new BigDecimal(row[2]));
-                    productDTO.setStatus(String.valueOf(Status.valueOf(row[3].toLowerCase())));
+                    productDTO.setStatus(String.valueOf(Status.valueOf(row[3].toUpperCase())));
                     Product product = productMapper.toEntity(productDTO);
                     productRepository.save(product);
                 }

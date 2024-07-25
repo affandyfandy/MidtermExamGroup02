@@ -2,7 +2,9 @@ package MidtermExam.Group2.service.impl;
 
 import MidtermExam.Group2.criteria.InvoiceSearchCriteria;
 import MidtermExam.Group2.dto.InvoiceDTO;
+import MidtermExam.Group2.dto.InvoiceDetailDTO;
 import MidtermExam.Group2.dto.InvoiceListDTO;
+import MidtermExam.Group2.entity.Invoice;
 import MidtermExam.Group2.entity.Customer;
 import MidtermExam.Group2.entity.Invoice;
 import MidtermExam.Group2.mapper.InvoiceMapper;
@@ -11,6 +13,8 @@ import MidtermExam.Group2.repository.InvoiceRepository;
 import MidtermExam.Group2.repository.InvoiceSpecification;
 import MidtermExam.Group2.service.InvoiceService;
 import jakarta.transaction.Transactional;
+import java.util.Optional;
+import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,7 +35,8 @@ public class InvoiceServiceImpl implements InvoiceService {
     private final CustomerRepository customerRepository;
 
     @Autowired
-    public InvoiceServiceImpl(InvoiceRepository invoiceRepository, InvoiceMapper invoiceMapper, CustomerRepository customerRepository) {
+    public InvoiceServiceImpl(InvoiceRepository invoiceRepository, InvoiceMapper invoiceMapper,
+            CustomerRepository customerRepository) {
         this.invoiceRepository = invoiceRepository;
         this.invoiceMapper = invoiceMapper;
         this.customerRepository = customerRepository;
@@ -94,5 +99,15 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         invoice = invoiceRepository.save(invoice);
         return invoiceMapper.toInvoicesDTO(invoice);
+    }
+
+    @Override
+    public InvoiceDetailDTO getInvoiceDetail(UUID invoiceId) {
+        Optional<Invoice> invoiceOpt = invoiceRepository.findById(invoiceId);
+        if (invoiceOpt.isPresent()) {
+            return invoiceMapper.toInvoiceDetailDTO(invoiceOpt.get());
+        } else {
+            throw new RuntimeException("Invoice not found");
+        }
     }
 }

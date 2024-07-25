@@ -17,4 +17,3 @@ public class InvoiceListDTO {
     private String customerName;
     private LocalDate invoiceDate;
 }
-

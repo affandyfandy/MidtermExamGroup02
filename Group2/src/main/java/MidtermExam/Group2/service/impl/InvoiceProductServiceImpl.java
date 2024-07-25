@@ -3,6 +3,7 @@ package MidtermExam.Group2.service.impl;
 import MidtermExam.Group2.dto.InvoiceProductDTO;
 import MidtermExam.Group2.entity.InvoiceProduct;
 import MidtermExam.Group2.entity.InvoiceProductId;
+import MidtermExam.Group2.entity.InvoiceProduct;
 import MidtermExam.Group2.mapper.InvoiceProductMapper;
 import MidtermExam.Group2.repository.InvoiceProductRepository;
 import MidtermExam.Group2.repository.InvoiceRepository;
@@ -28,7 +29,9 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
     private final ProductRepository productRepository;
 
     @Autowired
-    public InvoiceProductServiceImpl(InvoiceProductRepository invoiceProductRepository, InvoiceProductMapper invoiceProductMapper, InvoiceRepository invoiceRepository, ProductRepository productRepository) {
+    public InvoiceProductServiceImpl(InvoiceProductRepository invoiceProductRepository,
+            InvoiceProductMapper invoiceProductMapper, InvoiceRepository invoiceRepository,
+            ProductRepository productRepository) {
         this.invoiceProductRepository = invoiceProductRepository;
         this.invoiceProductMapper = invoiceProductMapper;
         this.invoiceRepository = invoiceRepository;
@@ -111,4 +114,5 @@ public class InvoiceProductServiceImpl implements InvoiceProductService {
 
         return invoiceProductMapper.toInvoiceProductDTO(invoiceProduct);
     }
+
 }
