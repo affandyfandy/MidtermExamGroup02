@@ -10,6 +10,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.awt.*;
 import java.io.ByteArrayInputStream;
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@Transactional
 public class ExportServiceImpl implements ExportService {
 
     private final InvoiceRepository invoiceRepository;
@@ -33,10 +35,15 @@ public class ExportServiceImpl implements ExportService {
     public ByteArrayInputStream exportInvoicesToExcel(UUID customerId, Integer month, Integer year) throws IOException {
         List<Invoice> invoices = invoiceRepository.findByCustomerAndDate(customerId, month, year);
 
+        if (invoices.isEmpty()) {
+            throw new IllegalArgumentException("No invoices found");
+        }
+
         try (Workbook workbook = new XSSFWorkbook()) {
             Sheet sheet = workbook.createSheet("Invoices");
 
             sheet.setColumnWidth(1, 40 * 256);
+            sheet.setColumnWidth(2, 40 * 256);
 
             int rowNum = 0;
 
@@ -110,10 +117,8 @@ public class ExportServiceImpl implements ExportService {
     private int createInvoiceSection(Sheet sheet, Invoice invoice, int rowNum) {
         int startRow = rowNum;
 
-        // Create a DataFormat for the workbook and CellStyle with the currency format
-        DataFormat format = sheet.getWorkbook().createDataFormat();
-        CellStyle currencyStyle = sheet.getWorkbook().createCellStyle();
-        currencyStyle.setDataFormat(format.getFormat("$#,##0.00"));
+        CellStyle leftAlignStyle = sheet.getWorkbook().createCellStyle();
+        leftAlignStyle.setAlignment(HorizontalAlignment.LEFT);
 
         CellStyle topBorderStyle = sheet.getWorkbook().createCellStyle();
         CellStyle bottomBorderStyle = sheet.getWorkbook().createCellStyle();
@@ -137,7 +142,7 @@ public class ExportServiceImpl implements ExportService {
         invoiceAmountRow.createCell(1).setCellValue("Invoice Amount");
 
         Cell invoiceAmountCell = invoiceAmountRow.createCell(2);
-        invoiceAmountCell.setCellStyle(currencyStyle);
+        invoiceAmountCell.setCellStyle(leftAlignStyle);
         invoiceAmountCell.setCellValue(invoice.getInvoiceAmount().doubleValue());
 
         rowNum++;
@@ -166,16 +171,9 @@ public class ExportServiceImpl implements ExportService {
             Row row = sheet.createRow(rowNum++);
             row.createCell(1).setCellValue(product.getProduct().getId().toString());
             row.createCell(2).setCellValue(product.getProduct().getName());
-
-            Cell priceCell = row.createCell(3);
-            priceCell.setCellStyle(currencyStyle);
-            priceCell.setCellValue(product.getProduct().getPrice().doubleValue());
-
+            row.createCell(3).setCellValue(product.getProduct().getPrice().doubleValue());
             row.createCell(4).setCellValue(product.getQuantity());
-
-            Cell amountCell = row.createCell(5);
-            amountCell.setCellStyle(currencyStyle);
-            amountCell.setCellValue(product.getAmount().doubleValue());
+            row.createCell(5).setCellValue(product.getAmount().doubleValue());
         }
 
         for (int rowIndex = startRow; rowIndex < rowNum; rowIndex++) {

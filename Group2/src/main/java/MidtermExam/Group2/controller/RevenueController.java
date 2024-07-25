@@ -27,8 +27,8 @@ public class RevenueController {
 
     @GetMapping("/day")
     public ResponseEntity<RevenueDTO> getRevenueByDay(
-            @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime date) {
-        RevenueDTO revenue = revenueService.getRevenueByDay(date.toLocalDate());
+            @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate date) {
+        RevenueDTO revenue = revenueService.getRevenueByDay(date);
         return ResponseEntity.ok(revenue);
     }
 

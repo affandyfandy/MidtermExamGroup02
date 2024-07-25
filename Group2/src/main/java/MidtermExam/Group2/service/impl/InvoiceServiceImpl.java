@@ -12,13 +12,14 @@ import MidtermExam.Group2.repository.CustomerRepository;
 import MidtermExam.Group2.repository.InvoiceRepository;
 import MidtermExam.Group2.repository.InvoiceSpecification;
 import MidtermExam.Group2.service.InvoiceService;
-import jakarta.transaction.Transactional;
+
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -65,6 +66,10 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         Customer customer = customerOpt.get();
 
+        if (customer.getStatus().name().equals("INACTIVE")) {
+            throw new IllegalArgumentException("Customer is inactive");
+        }
+
         Invoice invoice = invoiceMapper.toInvoices(invoiceDTO);
 
         LocalDate invoiceDateOnly = invoiceDTO.getInvoiceDate();
@@ -93,6 +98,10 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         Customer customer = customerRepository.findById(invoiceDTO.getCustomerId())
                 .orElseThrow(() -> new IllegalArgumentException("Customer not found"));
+
+        if (customer.getStatus().name().equals("INACTIVE")) {
+            throw new IllegalArgumentException("Customer is inactive");
+        }
 
         invoice.setCustomer(customer);
         invoice.setInvoiceDate(LocalDateTime.of(invoiceDTO.getInvoiceDate(), LocalTime.MIDNIGHT));
