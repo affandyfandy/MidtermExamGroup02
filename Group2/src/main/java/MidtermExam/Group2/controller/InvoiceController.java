@@ -6,6 +6,9 @@ import MidtermExam.Group2.dto.InvoiceDetailDTO;
 import MidtermExam.Group2.dto.InvoiceListDTO;
 import MidtermExam.Group2.service.InvoiceService;
 import jakarta.validation.Valid;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -31,31 +34,40 @@ public class InvoiceController {
         return ResponseEntity.ok(invoiceService.getAllInvoices(pageable, criteria));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<InvoiceDTO> getInvoiceById(@PathVariable("id") UUID id) {
-        return ResponseEntity.ok(invoiceService.getInvoiceById(id));
-    }
-
     @PostMapping
-    public ResponseEntity<InvoiceDTO> addInvoice(@Valid @RequestBody InvoiceDTO invoiceDTO) {
-        InvoiceDTO addedInvoice = invoiceService.addInvoice(invoiceDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(addedInvoice);
+    public ResponseEntity<?> addInvoice(@Valid @RequestBody InvoiceDTO invoiceDTO) {
+        try {
+            InvoiceDTO addedInvoice = invoiceService.addInvoice(invoiceDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body(addedInvoice);
+        } catch (RuntimeException e) {
+            Map<String, String> response = new HashMap<>();
+            response.put("errors", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<InvoiceDTO> editInvoice(@PathVariable("id") UUID id,
+    public ResponseEntity<?> editInvoice(@PathVariable("id") UUID id,
             @Valid @RequestBody InvoiceDTO invoiceDTO) {
-        InvoiceDTO editedInvoice = invoiceService.editInvoice(id, invoiceDTO);
-        return ResponseEntity.ok(editedInvoice);
+        try {
+            InvoiceDTO editedInvoice = invoiceService.editInvoice(id, invoiceDTO);
+            return ResponseEntity.ok(editedInvoice);
+        } catch (RuntimeException e) {
+            Map<String, String> response = new HashMap<>();
+            response.put("errors", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
     }
 
-    @GetMapping("/{invoiceId}")
-    public ResponseEntity<InvoiceDetailDTO> getInvoiceDetail(@PathVariable UUID invoiceId) {
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getInvoiceDetail(@PathVariable("id") UUID invoiceId) {
         try {
             InvoiceDetailDTO invoiceDetail = invoiceService.getInvoiceDetail(invoiceId);
             return new ResponseEntity<>(invoiceDetail, HttpStatus.OK);
         } catch (RuntimeException e) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            Map<String, String> response = new HashMap<>();
+            response.put("errors", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
         }
     }
 }

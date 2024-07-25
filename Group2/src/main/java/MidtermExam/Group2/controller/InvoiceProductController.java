@@ -11,7 +11,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -30,14 +32,26 @@ public class InvoiceProductController {
     }
 
     @PostMapping
-    public ResponseEntity<InvoiceProductDTO> addInvoiceProduct(@Valid @RequestBody InvoiceProductDTO invoiceProductDTO) {
-        InvoiceProductDTO addedInvoiceProduct = invoiceProductService.addInvoiceProduct(invoiceProductDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(addedInvoiceProduct);
+    public ResponseEntity<?> addInvoiceProduct(@Valid @RequestBody InvoiceProductDTO invoiceProductDTO) {
+        try {
+            InvoiceProductDTO addedInvoiceProduct = invoiceProductService.addInvoiceProduct(invoiceProductDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body(addedInvoiceProduct);
+        } catch (RuntimeException e) {
+            Map<String, String> response = new HashMap<>();
+            response.put("errors", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
     }
 
     @PutMapping("/{invoiceId}/{productId}")
-    public ResponseEntity<InvoiceProductDTO> editInvoiceProduct(@PathVariable("invoiceId") UUID invoiceId, @PathVariable("productId") UUID productId, @Valid @RequestBody InvoiceProductDTO invoiceProductDTO) {
-        InvoiceProductDTO editedInvoiceProduct = invoiceProductService.editInvoiceProduct(invoiceProductDTO, invoiceId, productId);
-        return ResponseEntity.ok(editedInvoiceProduct);
+    public ResponseEntity<?> editInvoiceProduct(@PathVariable("invoiceId") UUID invoiceId, @PathVariable("productId") UUID productId, @Valid @RequestBody InvoiceProductDTO invoiceProductDTO) {
+        try {
+            InvoiceProductDTO editedInvoiceProduct = invoiceProductService.editInvoiceProduct(invoiceProductDTO, invoiceId, productId);
+            return ResponseEntity.ok(editedInvoiceProduct);
+        } catch (RuntimeException e) {
+            Map<String, String> response = new HashMap<>();
+            response.put("errors", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
     }
 }

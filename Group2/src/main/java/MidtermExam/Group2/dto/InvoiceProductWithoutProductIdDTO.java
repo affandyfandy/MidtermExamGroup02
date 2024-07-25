@@ -5,16 +5,15 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+
 import java.math.BigDecimal;
 import java.util.UUID;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class InvoiceProductWithoutIdDTO {
+public class InvoiceProductWithoutProductIdDTO {
 
     @NotNull(message = "Invoice id cannot be null")
     private UUID invoiceId;
