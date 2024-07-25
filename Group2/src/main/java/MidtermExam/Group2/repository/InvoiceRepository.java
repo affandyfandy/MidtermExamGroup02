@@ -4,6 +4,9 @@ import MidtermExam.Group2.entity.Invoice;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +22,7 @@ import java.util.UUID;
 public interface InvoiceRepository extends JpaRepository<Invoice, UUID>, JpaSpecificationExecutor<Invoice> {
     /**
      * Find all invoices with pagination
+     * 
      * @param pageable pagination information
      * @return page of invoices
      */
@@ -27,6 +31,7 @@ public interface InvoiceRepository extends JpaRepository<Invoice, UUID>, JpaSpec
 
     /**
      * Find invoice by id
+     * 
      * @param id invoice id
      * @return invoice
      */
@@ -35,16 +40,20 @@ public interface InvoiceRepository extends JpaRepository<Invoice, UUID>, JpaSpec
 
     /**
      * Find invoices by customer id and date
+     * 
      * @param customerId customer id
-     * @param month month
-     * @param year year
+     * @param month      month
+     * @param year       year
      * @return
      */
     @Query("SELECT i FROM Invoice i WHERE (:customerId IS NULL OR i.customer.id = :customerId) AND (:month IS NULL OR MONTH(i.invoiceDate) = :month) AND (:year IS NULL OR YEAR(i.invoiceDate) = :year)")
     List<Invoice> findByCustomerAndDate(@Param("customerId") UUID customerId,
-                                        @Param("month") Integer month,
-                                        @Param("year") Integer year);
+            @Param("month") Integer month,
+            @Param("year") Integer year);
 
     List<Invoice> findByCustomerId(UUID customerId);
+
+    @Query("SELECT SUM(i.invoiceAmount) FROM Invoice i WHERE i.invoiceDate BETWEEN :startDateTime AND :endDateTime")
+    BigDecimal calculateTotalRevenueByDateTime(LocalDateTime startDateTime, LocalDateTime endDateTime);
 
 }
