@@ -14,7 +14,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CustomerDTO {
     private UUID id;
+
+    @NotBlank(message = "Name is required")
     private String name;
+
+    @NotBlank(message = "Email is required")
+    @Pattern(regexp = "^\\+62\\d{9,13}$", message = "Phone must be a valid Indonesian number starting with +62")
     private String phoneNumber;
+
+    @NotBlank(message = "Status is required")
     private String status;
 }

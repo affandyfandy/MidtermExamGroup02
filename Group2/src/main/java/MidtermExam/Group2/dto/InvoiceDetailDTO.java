@@ -17,5 +17,5 @@ public class InvoiceDetailDTO {
 
     private CustomerDTO customer;
 
-    private List<InvoiceProductWithoutIdDTO> products;
+    private List<InvoiceProductWithoutProductIdDTO> products;
 }

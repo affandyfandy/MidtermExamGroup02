@@ -1,7 +1,7 @@
 package MidtermExam.Group2.mapper;
 
 import MidtermExam.Group2.dto.InvoiceProductDTO;
-import MidtermExam.Group2.dto.InvoiceProductWithoutIdDTO;
+import MidtermExam.Group2.dto.InvoiceProductWithoutProductIdDTO;
 import MidtermExam.Group2.entity.Invoice;
 import MidtermExam.Group2.entity.InvoiceProduct;
 import MidtermExam.Group2.entity.Product;
@@ -33,7 +33,7 @@ public interface InvoiceProductMapper {
                         @Mapping(source = "quantity", target = "quantity"),
                         @Mapping(source = "amount", target = "amount")
         })
-        InvoiceProductWithoutIdDTO toInvoiceProductWithoutIdDTO(InvoiceProduct invoiceProduct);
+        InvoiceProductWithoutProductIdDTO toInvoiceProductWithoutIdDTO(InvoiceProduct invoiceProduct);
 
         @Mappings({
                         @Mapping(source = "invoiceId", target = "invoice.id"),
@@ -41,6 +41,6 @@ public interface InvoiceProductMapper {
                         @Mapping(source = "quantity", target = "quantity"),
                         @Mapping(source = "amount", target = "amount")
         })
-        InvoiceProduct toInvoiceProduct(InvoiceProductWithoutIdDTO invoiceProductWithoutIdDTO, @Context Invoice invoice,
-                        @Context Product product);
+        InvoiceProduct toInvoiceProduct(InvoiceProductWithoutProductIdDTO invoiceProductWithoutProductIdDTO, @Context Invoice invoice,
+                                        @Context Product product);
 }
