@@ -49,7 +49,7 @@ public class InvoiceController {
         return ResponseEntity.ok(editedInvoice);
     }
 
-    @GetMapping("/{invoiceId}")
+    @GetMapping("/detail/{invoiceId}")
     public ResponseEntity<InvoiceDetailDTO> getInvoiceDetail(@PathVariable UUID invoiceId) {
         try {
             InvoiceDetailDTO invoiceDetail = invoiceService.getInvoiceDetail(invoiceId);

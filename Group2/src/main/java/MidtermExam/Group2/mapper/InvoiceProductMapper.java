@@ -31,7 +31,8 @@ public interface InvoiceProductMapper {
                         @Mapping(source = "invoice.id", target = "invoiceId"),
                         @Mapping(source = "product.name", target = "productName"),
                         @Mapping(source = "quantity", target = "quantity"),
-                        @Mapping(source = "amount", target = "amount")
+                        @Mapping(source = "amount", target = "amount"),
+                        @Mapping(source = "product.price", target = "price")
         })
         InvoiceProductWithoutIdDTO toInvoiceProductWithoutIdDTO(InvoiceProduct invoiceProduct);
 
@@ -39,7 +40,8 @@ public interface InvoiceProductMapper {
                         @Mapping(source = "invoiceId", target = "invoice.id"),
                         @Mapping(source = "productName", target = "product.name"),
                         @Mapping(source = "quantity", target = "quantity"),
-                        @Mapping(source = "amount", target = "amount")
+                        @Mapping(source = "amount", target = "amount"),
+                        @Mapping(source = "price", target = "product.price")
         })
         InvoiceProduct toInvoiceProduct(InvoiceProductWithoutIdDTO invoiceProductWithoutIdDTO, @Context Invoice invoice,
                         @Context Product product);

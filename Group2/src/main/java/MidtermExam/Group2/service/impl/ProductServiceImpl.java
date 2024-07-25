@@ -86,12 +86,12 @@ public class ProductServiceImpl implements ProductService {
         try (CSVReader csvReader = new CSVReader(new InputStreamReader(file.getInputStream()))) {
             List<String[]> rows = csvReader.readAll();
             for (String[] row : rows) {
-                if (row.length >= 4) {
+                if (row.length >= 3) {
                     ProductDTO productDTO = new ProductDTO();
-                    productDTO.setId(UUID.fromString(row[0]));
-                    productDTO.setName(row[1]);
-                    productDTO.setPrice(new BigDecimal(row[2]));
-                    productDTO.setStatus(String.valueOf(Status.valueOf(row[3].toUpperCase())));
+                    productDTO.setId(UUID.randomUUID());
+                    productDTO.setName(row[0]);
+                    productDTO.setPrice(new BigDecimal(row[1]));
+                    productDTO.setStatus(String.valueOf(Status.valueOf(row[2].toUpperCase())));
                     Product product = productMapper.toEntity(productDTO);
                     productRepository.save(product);
                 }
