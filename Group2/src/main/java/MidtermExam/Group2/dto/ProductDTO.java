@@ -1,5 +1,6 @@
 package MidtermExam.Group2.dto;
 
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -15,7 +16,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ProductDTO {
     private UUID id;
+
+    @NotBlank(message = "Name is required")
     private String name;
+
+    @NotNull(message = "Price is required")
+    @Min(value = 0, message = "Price must be greater than 0")
     private BigDecimal price;
+
+    @NotBlank(message = "Status is required")
     private String status;
 }

@@ -14,8 +14,6 @@ public class InvoiceDetailDTO {
     private UUID invoiceId;
     private BigDecimal invoiceAmount;
     private LocalDate invoiceDate;
-
     private CustomerDTO customer;
-
     private List<InvoiceProductWithoutProductIdDTO> products;
 }
