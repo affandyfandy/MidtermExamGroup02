@@ -6,10 +6,12 @@ import MidtermExam.Group2.dto.InvoiceDetailDTO;
 import MidtermExam.Group2.dto.InvoiceListDTO;
 import MidtermExam.Group2.service.ExportService;
 import MidtermExam.Group2.service.InvoiceService;
+import MidtermExam.Group2.service.PdfService;
 import jakarta.validation.Valid;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -21,6 +23,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import java.util.UUID;
 
@@ -29,11 +32,13 @@ import java.util.UUID;
 public class InvoiceController {
     private final InvoiceService invoiceService;
     private final ExportService exportService;
+    private final PdfService pdfService;
 
     @Autowired
-    public InvoiceController(InvoiceService invoiceService, ExportService exportService) {
+    public InvoiceController(InvoiceService invoiceService, ExportService exportService, PdfService pdfService) {
         this.invoiceService = invoiceService;
         this.exportService = exportService;
+        this.pdfService = pdfService;
     }
 
     @GetMapping
@@ -95,6 +100,36 @@ public class InvoiceController {
                     .body(excelFile.readAllBytes());
         } catch (IOException e) {
             return ResponseEntity.status(500).body("Failed to export invoices to Excel");
+        }
+    }
+
+    @GetMapping("/{id}/pdf")
+    public ResponseEntity<StreamingResponseBody> generateInvoicePdf(@PathVariable("id") UUID invoiceId) {
+        try {
+            InvoiceDetailDTO invoiceDetail = invoiceService.getInvoiceDetail(invoiceId);
+
+            StreamingResponseBody stream = outputStream -> {
+                try (InputStream is = pdfService.generatePdf(invoiceDetail)) {
+                    byte[] buffer = new byte[2048];
+                    int bytesRead;
+                    while ((bytesRead = is.read(buffer)) != -1) {
+                        outputStream.write(buffer, 0, bytesRead);
+                    }
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            };
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Content-Disposition", "attachment; filename=invoice.pdf");
+
+            return ResponseEntity
+                    .ok()
+                    .headers(headers)
+                    .contentType(MediaType.APPLICATION_PDF)
+                    .body(stream);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(null);
         }
     }
 }
