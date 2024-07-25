@@ -2,6 +2,7 @@ package MidtermExam.Group2.controller;
 
 import MidtermExam.Group2.dto.CustomerDTO;
 import MidtermExam.Group2.service.CustomerService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -37,13 +38,13 @@ public class CustomerController {
     }
 
     @PostMapping
-    public ResponseEntity<CustomerDTO> createCustomer(@RequestBody CustomerDTO customerDTO) {
+    public ResponseEntity<CustomerDTO> createCustomer(@Valid @RequestBody CustomerDTO customerDTO) {
         CustomerDTO createdCustomer = customerService.createCustomer(customerDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdCustomer);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CustomerDTO> editCustomer(@PathVariable UUID id, @RequestBody CustomerDTO customerDTO) {
+    public ResponseEntity<CustomerDTO> editCustomer(@PathVariable UUID id, @Valid @RequestBody CustomerDTO customerDTO) {
         Optional<CustomerDTO> updatedCustomer = customerService.editCustomer(id, customerDTO);
         return updatedCustomer.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());

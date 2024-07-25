@@ -1,31 +1,26 @@
 package MidtermExam.Group2.dto;
 
 import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
-@Getter
-@Setter
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class InvoiceListDTO {
-
-    @NotNull(message = "Invoice id cannot be null")
     private UUID id;
-
-    @NotNull(message = "Invoice amount cannot be null")
-    @DecimalMin(value = "0.0", inclusive = true, message = "Invoice amount must be greater than or equal to 0")
     private BigDecimal invoiceAmount;
 
-    @NotNull(message = "Customer name cannot be null")
+    @NotBlank(message = "Customer name is required")
     private String customerName;
 
-    @NotNull(message = "Invoice date cannot be null")
-    private LocalDateTime invoiceDate;
+    @NotBlank(message = "Invoice date is required")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    private LocalDate invoiceDate;
 }
-
