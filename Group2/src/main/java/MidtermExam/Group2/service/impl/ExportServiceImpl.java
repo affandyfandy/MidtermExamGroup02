@@ -128,7 +128,7 @@ public class ExportServiceImpl implements ExportService {
         leftAlignStyle.setAlignment(HorizontalAlignment.LEFT);
 
         Row invoiceRow = sheet.createRow(rowNum++);
-        invoiceRow.createCell(0).setCellValue(rowNum);
+        invoiceRow.createCell(0).setCellValue(rowNum - 1);
         invoiceRow.createCell(1).setCellValue(invoice.getId().toString());
         invoiceRow.createCell(2).setCellValue(invoice.getInvoiceDate().format(DateTimeFormatter.ofPattern("MMMM dd, yyyy HH:mm:ss")));
         invoiceRow.createCell(3).setCellValue(invoice.getInvoiceAmount().doubleValue());
@@ -142,7 +142,7 @@ public class ExportServiceImpl implements ExportService {
                 invoiceRow = sheet.createRow(rowNum++);
             }
 
-            invoiceRow.createCell(0).setCellValue(rowNum);
+            invoiceRow.createCell(0).setCellValue(rowNum - 1);
             invoiceRow.createCell(6).setCellValue(product.getProduct().getId().toString());
             invoiceRow.createCell(7).setCellValue(product.getProduct().getName());
             invoiceRow.createCell(8).setCellValue(product.getProduct().getPrice().doubleValue());
