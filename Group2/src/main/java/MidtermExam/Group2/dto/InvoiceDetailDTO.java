@@ -1,7 +1,7 @@
 package MidtermExam.Group2.dto;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import lombok.Getter;
@@ -13,7 +13,7 @@ public class InvoiceDetailDTO {
 
     private UUID invoiceId;
     private BigDecimal invoiceAmount;
-    private LocalDateTime invoiceDate;
+    private LocalDate invoiceDate;
 
     private CustomerDTO customer;
 
