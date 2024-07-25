@@ -43,69 +43,77 @@ public class ExportServiceImpl implements ExportService {
             Sheet sheet = workbook.createSheet("Invoices");
 
             sheet.setColumnWidth(1, 40 * 256);
-            sheet.setColumnWidth(2, 40 * 256);
+            sheet.setColumnWidth(2, 20 * 256);
+            sheet.setColumnWidth(3, 15 * 256);
+            sheet.setColumnWidth(4, 40 * 256);
+            sheet.setColumnWidth(5, 20 * 256);
+            sheet.setColumnWidth(6, 40 * 256);
+            sheet.setColumnWidth(7, 40 * 256);
+            sheet.setColumnWidth(8, 17 * 256);
+            sheet.setColumnWidth(9, 17 * 256);
+            sheet.setColumnWidth(10, 17 * 256);
 
             int rowNum = 0;
 
-            Font titleFont = workbook.createFont();
-            titleFont.setBold(true);
-            titleFont.setFontHeightInPoints((short) 22);
+            Font headerFont = workbook.createFont();
+            headerFont.setBold(true);
 
-            CellStyle titleStyle = workbook.createCellStyle();
-            titleStyle.setFont(titleFont);
-
-            Row titleRow = sheet.createRow(rowNum++);
-
-            sheet.addMergedRegion(new CellRangeAddress(
-                    0, // start row
-                    0, // end row
-                    1, // start column
-                    3  // end column
-            ));
-
-            Cell titleCell = titleRow.createCell(1);
-            titleCell.setCellValue("Invoices");
-            titleCell.setCellStyle(titleStyle);
-
-            Row groupNameRow = sheet.createRow(rowNum++);
-            groupNameRow.createCell(1).setCellValue("Group 2");
+            CellStyle headerStyle = workbook.createCellStyle();
+            headerStyle.setFont(headerFont);
 
             if (invoices.isEmpty()) {
                 Row emptyRow = sheet.createRow(rowNum++);
-                emptyRow.createCell(1).setCellValue("No invoices found");
+                emptyRow.createCell(0).setCellValue("No invoices found");
             }
 
+            Row headerRow = sheet.createRow(rowNum++);
+
+            Cell noHeader = headerRow.createCell(0);
+            noHeader.setCellValue("No");
+            noHeader.setCellStyle(headerStyle);
+
+            Cell invoiceIdHeader = headerRow.createCell(1);
+            invoiceIdHeader.setCellValue("Invoice ID");
+            invoiceIdHeader.setCellStyle(headerStyle);
+
+            Cell invoiceDateHeader = headerRow.createCell(2);
+            invoiceDateHeader.setCellValue("Invoice Date");
+            invoiceDateHeader.setCellStyle(headerStyle);
+
+            Cell invoiceAmountHeader = headerRow.createCell(3);
+            invoiceAmountHeader.setCellValue("Invoice Amount");
+            invoiceAmountHeader.setCellStyle(headerStyle);
+
+            Cell customerIdHeader = headerRow.createCell(4);
+            customerIdHeader.setCellValue("Customer ID");
+            customerIdHeader.setCellStyle(headerStyle);
+
+            Cell customerNameHeader = headerRow.createCell(5);
+            customerNameHeader.setCellValue("Customer Name");
+            customerNameHeader.setCellStyle(headerStyle);
+
+            Cell productIdHeader = headerRow.createCell(6);
+            productIdHeader.setCellValue("Product ID");
+            productIdHeader.setCellStyle(headerStyle);
+
+            Cell productNameHeader = headerRow.createCell(7);
+            productNameHeader.setCellValue("Product Name");
+            productNameHeader.setCellStyle(headerStyle);
+
+            Cell productPriceHeader = headerRow.createCell(8);
+            productPriceHeader.setCellValue("Product Price");
+            productPriceHeader.setCellStyle(headerStyle);
+
+            Cell productQuantityHeader = headerRow.createCell(9);
+            productQuantityHeader.setCellValue("Product Quantity");
+            productQuantityHeader.setCellStyle(headerStyle);
+
+            Cell productAmountHeader = headerRow.createCell(10);
+            productAmountHeader.setCellValue("Product Amount");
+            productAmountHeader.setCellStyle(headerStyle);
+
             for (Invoice invoice : invoices) {
-
-                rowNum++;
-
-                Row topBorderLine = sheet.createRow(rowNum++);
-                for (int i = 1; i <= 5; i++) {
-                    Cell cell = topBorderLine.createCell(i);
-                    cell.setCellStyle(sheet.getWorkbook().createCellStyle());
-                    cell.getCellStyle().setBorderTop(BorderStyle.THIN);
-                    if (i == 1) {
-                        cell.getCellStyle().setBorderLeft(BorderStyle.THIN);
-                    }
-                    if (i == 5) {
-                        cell.getCellStyle().setBorderRight(BorderStyle.THIN);
-                    }
-                }
-
                 rowNum = createInvoiceSection(sheet, invoice, rowNum);
-
-                Row bottomBorderLine = sheet.createRow(rowNum++);
-                for (int i = 1; i <= 5; i++) {
-                    Cell cell = bottomBorderLine.createCell(i);
-                    cell.setCellStyle(sheet.getWorkbook().createCellStyle());
-                    cell.getCellStyle().setBorderBottom(BorderStyle.THIN);
-                    if (i == 1) {
-                        cell.getCellStyle().setBorderLeft(BorderStyle.THIN);
-                    }
-                    if (i == 5) {
-                        cell.getCellStyle().setBorderRight(BorderStyle.THIN);
-                    }
-                }
             }
 
             ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -115,84 +123,31 @@ public class ExportServiceImpl implements ExportService {
     }
 
     private int createInvoiceSection(Sheet sheet, Invoice invoice, int rowNum) {
-        int startRow = rowNum;
 
         CellStyle leftAlignStyle = sheet.getWorkbook().createCellStyle();
         leftAlignStyle.setAlignment(HorizontalAlignment.LEFT);
 
-        CellStyle topBorderStyle = sheet.getWorkbook().createCellStyle();
-        CellStyle bottomBorderStyle = sheet.getWorkbook().createCellStyle();
-        CellStyle leftBorderStyle = sheet.getWorkbook().createCellStyle();
-        CellStyle rightBorderStyle = sheet.getWorkbook().createCellStyle();
+        Row invoiceRow = sheet.createRow(rowNum++);
+        invoiceRow.createCell(0).setCellValue(rowNum);
+        invoiceRow.createCell(1).setCellValue(invoice.getId().toString());
+        invoiceRow.createCell(2).setCellValue(invoice.getInvoiceDate().format(DateTimeFormatter.ofPattern("MMMM dd, yyyy HH:mm:ss")));
+        invoiceRow.createCell(3).setCellValue(invoice.getInvoiceAmount().doubleValue());
+        invoiceRow.createCell(4).setCellValue(invoice.getCustomer().getId().toString());
+        invoiceRow.createCell(5).setCellValue(invoice.getCustomer().getName());
 
-        topBorderStyle.setBorderTop(BorderStyle.THIN);
-        bottomBorderStyle.setBorderBottom(BorderStyle.THIN);
-        leftBorderStyle.setBorderLeft(BorderStyle.THIN);
-        rightBorderStyle.setBorderRight(BorderStyle.THIN);
+        for (int j = 0; j < invoice.getInvoiceProducts().size(); j++) {
+            InvoiceProduct product = invoice.getInvoiceProducts().get(j);
 
-        Row invoiceIdRow = sheet.createRow(rowNum++);
-        invoiceIdRow.createCell(1).setCellValue("Invoice ID");
-        invoiceIdRow.createCell(2).setCellValue(invoice.getId().toString());
-
-        Row invoiceDateRow = sheet.createRow(rowNum++);
-        invoiceDateRow.createCell(1).setCellValue("Invoice Date");
-        invoiceDateRow.createCell(2).setCellValue(invoice.getInvoiceDate().format(DateTimeFormatter.ofPattern("MMMM dd, yyyy HH:mm:ss")));
-
-        Row invoiceAmountRow = sheet.createRow(rowNum++);
-        invoiceAmountRow.createCell(1).setCellValue("Invoice Amount");
-
-        Cell invoiceAmountCell = invoiceAmountRow.createCell(2);
-        invoiceAmountCell.setCellStyle(leftAlignStyle);
-        invoiceAmountCell.setCellValue(invoice.getInvoiceAmount().doubleValue());
-
-        rowNum++;
-
-        Row customerIdRow = sheet.createRow(rowNum++);
-        customerIdRow.createCell(1).setCellValue("Customer ID");
-        customerIdRow.createCell(2).setCellValue(invoice.getCustomer().getId().toString());
-
-        Row customerNameRow = sheet.createRow(rowNum++);
-        customerNameRow.createCell(1).setCellValue("Customer Name");
-        customerNameRow.createCell(2).setCellValue(invoice.getCustomer().getName());
-
-        rowNum++;
-
-        Row listTitleRow = sheet.createRow(rowNum++);
-        listTitleRow.createCell(1).setCellValue("List Products");
-
-        Row headerRow = sheet.createRow(rowNum++);
-        headerRow.createCell(1).setCellValue("ID");
-        headerRow.createCell(2).setCellValue("Name");
-        headerRow.createCell(3).setCellValue("Price");
-        headerRow.createCell(4).setCellValue("Quantity");
-        headerRow.createCell(5).setCellValue("Amount");
-
-        for (InvoiceProduct product : invoice.getInvoiceProducts()) {
-            Row row = sheet.createRow(rowNum++);
-            row.createCell(1).setCellValue(product.getProduct().getId().toString());
-            row.createCell(2).setCellValue(product.getProduct().getName());
-            row.createCell(3).setCellValue(product.getProduct().getPrice().doubleValue());
-            row.createCell(4).setCellValue(product.getQuantity());
-            row.createCell(5).setCellValue(product.getAmount().doubleValue());
-        }
-
-        for (int rowIndex = startRow; rowIndex < rowNum; rowIndex++) {
-            Row row = sheet.getRow(rowIndex);
-            if (row == null) {
-                row = sheet.createRow(rowIndex);
+            if (j > 0) {
+                invoiceRow = sheet.createRow(rowNum++);
             }
-            for (int colIndex = 1; colIndex <= 5; colIndex++) {
-                Cell cell = row.getCell(colIndex);
-                if (cell == null) {
-                    cell = row.createCell(colIndex);
-                }
 
-                if (colIndex == 1) {
-                    cell.setCellStyle(leftBorderStyle);
-                } else if (colIndex == 5) {
-                    cell.setCellStyle(rightBorderStyle);
-                }
-            }
+            invoiceRow.createCell(0).setCellValue(rowNum);
+            invoiceRow.createCell(6).setCellValue(product.getProduct().getId().toString());
+            invoiceRow.createCell(7).setCellValue(product.getProduct().getName());
+            invoiceRow.createCell(8).setCellValue(product.getProduct().getPrice().doubleValue());
+            invoiceRow.createCell(9).setCellValue(product.getQuantity());
+            invoiceRow.createCell(10).setCellValue(product.getAmount().doubleValue());
         }
 
         return rowNum;
