@@ -21,8 +21,6 @@ public class InvoiceProductWithoutProductIdDTO {
     @NotNull(message = "Product name cannot be null")
     private String productName;
 
-    private BigDecimal price;
-
     @NotNull(message = "Quantity cannot be null")
     @Min(value = 0, message = "Quantity must be greater than or equal to 0")
     private int quantity;
