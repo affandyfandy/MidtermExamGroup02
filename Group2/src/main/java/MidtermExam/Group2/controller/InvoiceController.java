@@ -1,6 +1,7 @@
 package MidtermExam.Group2.controller;
 
 import MidtermExam.Group2.criteria.InvoiceSearchCriteria;
+import MidtermExam.Group2.dto.InvoiceAddDTO;
 import MidtermExam.Group2.dto.InvoiceDTO;
 import MidtermExam.Group2.dto.InvoiceDetailDTO;
 import MidtermExam.Group2.dto.InvoiceListDTO;
@@ -24,8 +25,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
-
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/invoices")
@@ -58,10 +57,22 @@ public class InvoiceController {
         }
     }
 
-    @PostMapping
-    public ResponseEntity<?> addInvoice(@Valid @RequestBody InvoiceDTO invoiceDTO) {
+    @PostMapping("/single")
+    public ResponseEntity<?> addSingleInvoice(@Valid @RequestBody InvoiceDTO invoiceDTO) {
         try {
-            InvoiceDTO addedInvoice = invoiceService.addInvoice(invoiceDTO);
+            InvoiceDTO addedInvoice = invoiceService.addSingleInvoice(invoiceDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body(addedInvoice);
+        } catch (RuntimeException e) {
+            Map<String, String> response = new HashMap<>();
+            response.put("errors", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
+    @PostMapping
+    public ResponseEntity<?> addInvoice(@Valid @RequestBody InvoiceAddDTO invoiceAddDTO) {
+        try {
+            InvoiceAddDTO addedInvoice = invoiceService.addInvoice(invoiceAddDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(addedInvoice);
         } catch (RuntimeException e) {
             Map<String, String> response = new HashMap<>();
