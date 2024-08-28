@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/api/v1/invoices")
 public class InvoiceController {
     private final InvoiceService invoiceService;
@@ -96,8 +97,8 @@ public class InvoiceController {
 
     @GetMapping("/excel")
     public ResponseEntity<?> exportInvoicesToExcel(@RequestParam(required = false) UUID customerId,
-                                                   @RequestParam(required = false) Integer month,
-                                                   @RequestParam(required = false) Integer year) {
+            @RequestParam(required = false) Integer month,
+            @RequestParam(required = false) Integer year) {
         try {
             ByteArrayInputStream excelFile = exportService.exportInvoicesToExcel(customerId, month, year);
 
