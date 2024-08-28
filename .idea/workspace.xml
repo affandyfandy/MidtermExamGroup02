@@ -5,7 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4b47e653-1810-4ee3-bb2e-606d63371517" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/Group2/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/Group2/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Group2/src/main/java/MidtermExam/Group2/controller/InvoiceController.java" beforeDir="false" afterPath="$PROJECT_DIR$/Group2/src/main/java/MidtermExam/Group2/controller/InvoiceController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Group2/src/main/java/MidtermExam/Group2/service/InvoiceService.java" beforeDir="false" afterPath="$PROJECT_DIR$/Group2/src/main/java/MidtermExam/Group2/service/InvoiceService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Group2/src/main/java/MidtermExam/Group2/service/impl/InvoiceServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/Group2/src/main/java/MidtermExam/Group2/service/impl/InvoiceServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pos-management-app/src/app/services/invoice.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/pos-management-app/src/app/services/invoice.service.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -31,9 +35,9 @@
     "RequestMappingsPanelWidth1": "75",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "Spring Boot.Group2Application.executor": "Run",
-    "git-widget-placeholder": "dev",
+    "git-widget-placeholder": "feature/integrate-product",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "D:/FPT/New Data FPT/FPT/POS MIDTERM/Final/MidtermExamGroup02/Group2",
+    "last_opened_file_path": "C:/Users/USER/OneDrive/Documents/GitHub/MidtermExamGroup02/Group2",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -51,14 +55,6 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-  </component>
-  <component name="SharedIndexes">
-    <attachedChunks>
-      <set>
-        <option value="bundled-jdk-9f38398b9061-39b83d9b5494-intellij.indexing.shared.core-IU-241.18034.62" />
-        <option value="bundled-js-predefined-1d06a55b98c1-0b3e54e931b4-JavaScript-IU-241.18034.62" />
-      </set>
-    </attachedChunks>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">

@@ -23,4 +23,6 @@ public interface InvoiceService {
 
     InvoiceDetailDTO getInvoiceDetail(UUID invoiceId);
 
+    void deleteInvoice(UUID id);
+
 }

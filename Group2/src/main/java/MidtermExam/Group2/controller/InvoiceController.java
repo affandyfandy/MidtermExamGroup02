@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -67,6 +68,18 @@ public class InvoiceController {
             Map<String, String> response = new HashMap<>();
             response.put("errors", e.getMessage());
             return ResponseEntity.badRequest().body(response);
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteInvoice(@PathVariable UUID id) {
+        Optional<InvoiceDTO> invoice = Optional.ofNullable(invoiceService.getInvoiceById(id));
+
+        if (invoice.isPresent()) {
+            invoiceService.deleteInvoice(id);
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product not found.");
         }
     }
 
