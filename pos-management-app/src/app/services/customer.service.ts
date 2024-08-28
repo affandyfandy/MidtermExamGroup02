@@ -2,8 +2,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Customer } from '../models/customer.model';
+import { map } from 'rxjs';
 
-const baseUrl = 'http://localhost:3000/customers';
+const baseUrl = 'http://localhost:8080/api/v1/customers';
 
 @Injectable({
   providedIn: 'root',
@@ -12,7 +13,9 @@ export class CustomerService {
   constructor(private http: HttpClient) {}
 
   getAll(): Observable<Customer[]> {
-    return this.http.get<Customer[]>(baseUrl);
+    return this.http.get<any>(baseUrl).pipe(
+      map(response => response.content)
+    );
   }
 
   get(id: any): Observable<Customer> {
@@ -25,6 +28,10 @@ export class CustomerService {
 
   update(id: any, data: any): Observable<any> {
     return this.http.put(`${baseUrl}/${id}`, data);
+  }
+
+  changeStatus(id: any, data: any): Observable<any> {
+    return this.http.patch(`${baseUrl}/${id}`, data);
   }
 
   delete(id: any): Observable<any> {

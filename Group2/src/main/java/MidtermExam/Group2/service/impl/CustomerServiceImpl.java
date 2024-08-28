@@ -43,6 +43,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public CustomerDTO createCustomer(CustomerDTO customerDTO) {
         Customer customer = customerMapper.toEntity(customerDTO);
+        customer.setId(UUID.randomUUID());
         customer.setCreatedTime(LocalDateTime.now());
         customer.setUpdatedTime(LocalDateTime.now());
         customer = customerRepository.save(customer);
