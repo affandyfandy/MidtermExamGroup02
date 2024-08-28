@@ -3,6 +3,7 @@ package MidtermExam.Group2.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,4 +27,8 @@ public class CustomerDTO {
 
     @NotBlank(message = "Status is required")
     private String status;
+
+    private LocalDateTime createdTime;
+
+    private LocalDateTime updatedTime;
 }

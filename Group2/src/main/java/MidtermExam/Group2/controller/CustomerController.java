@@ -68,7 +68,7 @@ public class CustomerController {
 
         if (customer.isPresent()) {
             customerService.deleteCustomer(id);
-            return ResponseEntity.ok("Customer record deleted successfully.");
+            return ResponseEntity.noContent().build();
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Customer not found.");
         }

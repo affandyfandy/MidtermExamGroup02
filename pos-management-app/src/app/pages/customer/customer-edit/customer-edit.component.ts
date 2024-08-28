@@ -24,11 +24,13 @@ export class CustomerEditComponent {
     if (form.valid) {
       this.customer.updatedTime = getCurrentTimestamp();
 
-      this.customerService.update(this.customer.id, this.customer).subscribe(updatedCustomer => {
-        this.customerUpdated.emit(updatedCustomer);
-        alert("Customer updated!");
-        this.router.navigate(['/customer']);
-      });
+      this.customerService.changeStatus(this.customer.id, this.customer).subscribe(() => {
+        this.customerService.update(this.customer.id, this.customer).subscribe(updatedCustomer => {
+          this.customerUpdated.emit(updatedCustomer);
+          alert("Customer updated!");
+          this.router.navigate(['/customer']);
+        });
+      })
     } else {
       alert("Please fill out the form correctly!");
     }
@@ -36,9 +38,23 @@ export class CustomerEditComponent {
 
   deleteCustomer(): void {
     if (confirm(`Do you want to delete ${this.customer.name}?`)) {
-      this.customerService.delete(this.customer.id).subscribe(() => {
-        alert("Customer deleted!");
-        this.router.navigate(['/customer']);
+      this.customerService.delete(this.customer.id).subscribe({
+        next: () => {
+          alert("Customer deleted!");
+          setTimeout(() => {
+            this.router.navigate(['/customer']);
+          }, 0);
+        },
+        error: (err) => {
+          console.error("Delete failed with error:", err);
+          alert("Failed to delete customer, but the customer might have been deleted.");
+          setTimeout(() => {
+            this.router.navigate(['/customer']);
+          }, 0);
+        },
+        complete: () => {
+          console.log("Delete operation completed");
+        }
       });
     }
   }

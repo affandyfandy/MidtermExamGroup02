@@ -22,7 +22,6 @@ export class CustomerAddComponent {
     private dialogRef: MatDialogRef<CustomerAddComponent>
   ) {
     this.customerForm = this.fb.group({
-      id: [null, Validators.required],
       name: ['', Validators.required],
       phoneNumber: ['',[
         Validators.required,

@@ -100,7 +100,7 @@ export class CustomerListComponent implements OnInit {
       ...customer,
       status: customer.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE',
       updatedTime: getCurrentTimestamp()};
-    this.customerService.update(customer.id, updatedCustomer).subscribe(() => {
+    this.customerService.changeStatus(customer.id, updatedCustomer).subscribe(() => {
       this.loadCustomers();
     });
   }
