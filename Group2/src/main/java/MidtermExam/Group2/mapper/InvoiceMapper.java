@@ -1,5 +1,6 @@
 package MidtermExam.Group2.mapper;
 
+import MidtermExam.Group2.dto.InvoiceAddDTO;
 import MidtermExam.Group2.dto.InvoiceDTO;
 import MidtermExam.Group2.dto.InvoiceDetailDTO;
 import MidtermExam.Group2.dto.InvoiceListDTO;
@@ -32,7 +33,9 @@ public interface InvoiceMapper {
     @Mapping(source = "invoiceProducts", target = "products")
     InvoiceDetailDTO toInvoiceDetailDTO(Invoice invoice);
 
-    @Mapping(source = "customer", target = "customer")
-    @Mapping(source = "products", target = "invoiceProducts")
-    Invoice toInvoice(InvoiceDetailDTO invoiceDetailDTO);
+    Invoice toInvoice(InvoiceAddDTO invoiceAddDTO);
+
+    @Mapping(source = "customer.id", target = "customerId")
+    @Mapping(source = "id", target = "invoiceId")
+    InvoiceAddDTO toInvoiceAddDTO(Invoice invoice);
 }

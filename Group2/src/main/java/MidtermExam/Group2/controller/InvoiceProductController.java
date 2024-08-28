@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/api/v1/invoice-products")
 public class InvoiceProductController {
     private final InvoiceProductService invoiceProductService;
@@ -44,9 +45,11 @@ public class InvoiceProductController {
     }
 
     @PutMapping("/{invoiceId}/{productId}")
-    public ResponseEntity<?> editInvoiceProduct(@PathVariable("invoiceId") UUID invoiceId, @PathVariable("productId") UUID productId, @Valid @RequestBody InvoiceProductDTO invoiceProductDTO) {
+    public ResponseEntity<?> editInvoiceProduct(@PathVariable("invoiceId") UUID invoiceId,
+            @PathVariable("productId") UUID productId, @Valid @RequestBody InvoiceProductDTO invoiceProductDTO) {
         try {
-            InvoiceProductDTO editedInvoiceProduct = invoiceProductService.editInvoiceProduct(invoiceProductDTO, invoiceId, productId);
+            InvoiceProductDTO editedInvoiceProduct = invoiceProductService.editInvoiceProduct(invoiceProductDTO,
+                    invoiceId, productId);
             return ResponseEntity.ok(editedInvoiceProduct);
         } catch (RuntimeException e) {
             Map<String, String> response = new HashMap<>();
@@ -56,7 +59,8 @@ public class InvoiceProductController {
     }
 
     @DeleteMapping("/{invoiceId}/{productId}")
-    public ResponseEntity<?> deleteInvoiceProduct(@PathVariable("invoiceId") UUID invoiceId, @PathVariable("productId") UUID productId) {
+    public ResponseEntity<?> deleteInvoiceProduct(@PathVariable("invoiceId") UUID invoiceId,
+            @PathVariable("productId") UUID productId) {
         try {
             invoiceProductService.deleteInvoiceProduct(invoiceId, productId);
             return ResponseEntity.ok().build();

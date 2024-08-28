@@ -19,6 +19,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/api/v1/products")
 public class ProductController {
 
@@ -91,7 +92,8 @@ public class ProductController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "name,asc") String[] sort) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.by(sort[0]).with(Sort.Direction.fromString(sort[1]))));
+        Pageable pageable = PageRequest.of(page, size,
+                Sort.by(Sort.Order.by(sort[0]).with(Sort.Direction.fromString(sort[1]))));
         Page<ProductDTO> products = productService.searchProducts(name, status, pageable);
         return ResponseEntity.ok(products);
     }
