@@ -1,8 +1,8 @@
 export class Invoice {
-  id?: string;
-  customer_id?: string;
-  invoice_amount?: number;
-  invoice_date?: Date;
+  id?: any;
+  customerName?: string;
+  invoiceAmount?: number;
+  invoiceDate?: Date;
   createdTime?: Date;
   updatedTime?: Date;
 }

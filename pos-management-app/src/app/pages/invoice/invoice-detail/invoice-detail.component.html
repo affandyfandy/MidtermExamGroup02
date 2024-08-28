@@ -2,9 +2,9 @@
 <br><br>
 <div class="invoice-container">
   <div class="invoice-detail" *ngIf="invoice">
-    <h5>Product Details: {{ invoice.id }}</h5>
+    <h5>Product Details: {{ invoice.customer.name }}</h5>
     <br>
-    <p><strong>Invoice ID:</strong> {{ invoice.id }}</p>
+    <p><strong>Invoice ID:</strong> {{ invoice.invoiceId }}</p>
     <p><strong>Customer ID:</strong> {{ invoice.customer.id }}</p>
     <p><strong>Customer Name:</strong> {{ invoice.customer.name }}</p>
     <p><strong>Product List:</strong></p>
@@ -18,8 +18,6 @@
     </ul>
     <p><strong>Invoice Amount:</strong> {{ invoice.invoiceAmount }}</p>
     <p><strong>Invoice Date: </strong>{{ invoice.invoiceDate }}</p>
-    <p><strong>Created Time: </strong>{{ invoice.createdTime }}</p>
-    <p><strong>Updated Time: </strong>{{ invoice.updatedTime }}</p>
   </div>
 
   <div class="invoice-edit">

@@ -34,7 +34,6 @@ export class InvoiceAddComponent {
     private dialogRef: MatDialogRef<InvoiceAddComponent>
   ) {
     this.invoiceForm = this.fb.group({
-      id: [null, Validators.required],
       customer_id: ['', Validators.required],
       invoice_amount: [{ value: '', disabled: true }, [Validators.required, Validators.min(0)]],
       selectedProducts: this.fb.array([]),
@@ -94,43 +93,32 @@ export class InvoiceAddComponent {
       const selectedProducts = this.selectedProducts.controls.map((control) => {
         const product = this.products.find(p => p.id === control.get('product_id')?.value);
         return {
-          invoiceId: this.invoiceForm.value.id,
-          name: product.name,
+          productId: product.id,
+          productName: product.name,
           price: product.price,
           quantity: control.get('quantity')?.value,
           amount: control.get('quantity')?.value * product.price
         };
       });
 
-      const currentTimestamp = getCurrentTimestamp();
       const newInvoice = {
-        id: this.invoiceForm.value.id,
-        customer: {
-          id: customer.id,
-          name: customer.name,
-          phoneNumber: customer.phoneNumber,
-          status: customer.status
-        },
-        products: selectedProducts,
+        customerId: customer.id,
+        invoiceDate: getCurrentTimestamp().slice(0, 10),
         invoiceAmount: this.invoiceForm.get('invoice_amount')?.value,
-        createdTime: stringToDate(currentTimestamp),
-        updatedTime: stringToDate(currentTimestamp),
-        invoiceDate: currentTimestamp.slice(0, 10)
+        products: selectedProducts,
       };
 
-      this.invoiceService.createInvoice(newInvoice).subscribe(() => {
+      this.invoiceService.create(newInvoice).subscribe(() => {
         alert("Invoice added!");
         this.dialogRef.close(true);
       });
     }
   }
 
-
   onCancel(): void {
     this.dialogRef.close(false);
   }
 
-  // Helper method to cast AbstractControl to FormGroup
   asFormGroup(control: AbstractControl): FormGroup {
     return control as FormGroup;
   }

@@ -21,7 +21,6 @@ export class ProductAddComponent {
     private dialogRef: MatDialogRef<ProductAddComponent>
   ) {
     this.productForm = this.fb.group({
-      id: [null, Validators.required],
       name: ['', Validators.required],
       price: ['', [Validators.required, Validators.min(0)]],
       status: ['ACTIVE', Validators.required],
@@ -37,7 +36,7 @@ export class ProductAddComponent {
       };
 
       this.productService.create(newProduct).subscribe(() => {
-        alert("Product added!")
+        alert("Product added!");
         this.dialogRef.close(true);
       });
     }

@@ -3,11 +3,6 @@
   <div class="content">
     <form [formGroup]="invoiceForm" (ngSubmit)="onSubmit()">
       <div>
-        <label for="id">ID:</label>
-        <input id="id" formControlName="id" type="text" />
-      </div>
-
-      <div>
         <label for="customer_id">Customer:</label>
         <select id="customer_id" formControlName="customer_id">
           <option *ngFor="let customer of customers" [value]="customer.id">{{ customer.name }}</option>
