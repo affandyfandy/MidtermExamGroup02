@@ -7,8 +7,9 @@ import { InvoiceService } from '../../../services/invoice.service';
 import { Product } from '../../../models/product.model';
 import { ProductService } from '../../../services/product.service';
 import { CustomerService } from '../../../services/customer.service';
-import { Customer } from '../../../models/customer.model';
 import { NgFor } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 export function stringToDate(timestamp: string): Date {
   return new Date(timestamp.replace(' ', 'T'));
@@ -31,12 +32,13 @@ export class InvoiceAddComponent {
     private invoiceService: InvoiceService,
     private productService: ProductService,
     private customerService: CustomerService,
-    private dialogRef: MatDialogRef<InvoiceAddComponent>
+    private dialogRef: MatDialogRef<InvoiceAddComponent>,
+    private snackBar: MatSnackBar
   ) {
     this.invoiceForm = this.fb.group({
       customer_id: ['', Validators.required],
       invoice_amount: [{ value: '', disabled: true }, [Validators.required, Validators.min(0)]],
-      selectedProducts: this.fb.array([]),
+      selectedProducts: this.fb.array([], this.validateProducts)  // Apply the custom validator here
     });
   }
 
@@ -47,6 +49,20 @@ export class InvoiceAddComponent {
     this.invoiceForm.get('selectedProducts')?.valueChanges.subscribe(() => {
       this.updateInvoiceAmount();
     });
+  }
+
+  validateProducts(formArray: AbstractControl): { [key: string]: boolean } | null {
+    const products = (formArray as FormArray).controls;
+    if (products.length === 0) {
+      return { noProducts: true };
+    }
+
+    const invalidQuantity = products.some(control => control.get('quantity')?.value <= 0);
+    if (invalidQuantity) {
+      return { invalidQuantity: true };
+    }
+
+    return null;
   }
 
   loadCustomers() {
@@ -128,9 +144,24 @@ export class InvoiceAddComponent {
         products: selectedProducts,
       };
 
-      this.invoiceService.create(newInvoice).subscribe(() => {
-        alert("Invoice added!");
-        this.dialogRef.close(true);
+      this.invoiceService.create(newInvoice).subscribe({
+        next: () => {
+          alert("Invoice added!");
+          this.dialogRef.close(true);
+        },
+        error: (errorResponse: HttpErrorResponse) => {
+          if (errorResponse.error && errorResponse.error.errors) {
+            const errorMessage = errorResponse.error.errors;
+            this.snackBar.open(errorMessage, 'Close', {
+              duration: 4000,
+              horizontalPosition: 'center',
+              verticalPosition: 'top',
+              panelClass: 'snackbar'
+            });
+          } else {
+            console.log('Unexpected error structure:', errorResponse);
+          }
+        }
       });
     }
   }

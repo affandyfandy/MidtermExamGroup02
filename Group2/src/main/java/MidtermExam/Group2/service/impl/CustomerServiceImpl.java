@@ -13,8 +13,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -33,6 +35,14 @@ public class CustomerServiceImpl implements CustomerService {
     public Page<CustomerDTO> getAllCustomers(Pageable pageable) {
         Page<Customer> customers = customerRepository.findAll(pageable);
         return customers.map(customerMapper::toDTO);
+    }
+
+    @Override
+    public List<CustomerDTO> getAllCustomersList() {
+        List<Customer> customers = customerRepository.findAll();
+        return customers.stream()
+                .map(customerMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -78,6 +88,5 @@ public class CustomerServiceImpl implements CustomerService {
     public void deleteCustomer(UUID id) {
         customerRepository.deleteById(id);
     }
-
 
 }

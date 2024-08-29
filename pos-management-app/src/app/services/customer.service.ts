@@ -12,9 +12,15 @@ const baseUrl = 'http://localhost:8080/api/v1/customers';
 export class CustomerService {
   constructor(private http: HttpClient) {}
 
+  // getAll(): Observable<Customer[]> {
+  //   return this.http.get<any>(baseUrl).pipe(
+  //     map(response => response.content)
+  //   );
+  // }
+
   getAll(): Observable<Customer[]> {
-    return this.http.get<any>(baseUrl).pipe(
-      map(response => response.content)
+    return this.http.get<any>(baseUrl + "/list").pipe(
+      map(response => response)
     );
   }
 

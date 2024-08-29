@@ -6,13 +6,13 @@ import MidtermExam.Group2.dto.InvoiceDTO;
 import MidtermExam.Group2.dto.InvoiceDetailDTO;
 import MidtermExam.Group2.dto.InvoiceListDTO;
 import MidtermExam.Group2.entity.*;
-import MidtermExam.Group2.entity.Invoice;
 import MidtermExam.Group2.mapper.InvoiceMapper;
 import MidtermExam.Group2.mapper.InvoiceProductMapper;
 import MidtermExam.Group2.repository.*;
 import MidtermExam.Group2.service.InvoiceService;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -24,8 +24,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.LocalDateTime;
-import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @Transactional
@@ -40,8 +38,8 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Autowired
     public InvoiceServiceImpl(InvoiceRepository invoiceRepository, InvoiceMapper invoiceMapper,
-                              CustomerRepository customerRepository, InvoiceProductRepository invoiceProductRepository,
-                              InvoiceProductMapper invoiceProductMapper, ProductRepository productRepository) {
+            CustomerRepository customerRepository, InvoiceProductRepository invoiceProductRepository,
+            InvoiceProductMapper invoiceProductMapper, ProductRepository productRepository) {
         this.invoiceRepository = invoiceRepository;
         this.invoiceMapper = invoiceMapper;
         this.customerRepository = customerRepository;
@@ -54,6 +52,15 @@ public class InvoiceServiceImpl implements InvoiceService {
     public Page<InvoiceListDTO> getAllInvoices(Pageable pageable, InvoiceSearchCriteria criteria) {
         InvoiceSpecification invoiceSpecification = new InvoiceSpecification(criteria);
         return invoiceRepository.findAll(invoiceSpecification, pageable).map(invoiceMapper::toInvoiceListDTO);
+    }
+
+    @Override
+    public List<InvoiceListDTO> getAllInvoicesList(InvoiceSearchCriteria criteria) {
+        InvoiceSpecification invoiceSpecification = new InvoiceSpecification(criteria);
+        List<Invoice> invoices = invoiceRepository.findAll(invoiceSpecification);
+        return invoices.stream()
+                .map(invoiceMapper::toInvoiceListDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -73,7 +80,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         Customer customer = customerOpt.get();
 
-        if (customer.getStatus().name().equals("INACTIVE")) {
+        if ("INACTIVE".equals(customer.getStatus().name())) {
             throw new IllegalArgumentException("Customer is inactive");
         }
 
@@ -103,10 +110,6 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         Customer customer = customerOpt.get();
 
-        if (customer.getStatus().name().equals("INACTIVE")) {
-            throw new IllegalArgumentException("Customer is inactive");
-        }
-
         Invoice invoice = invoiceMapper.toInvoice(invoiceAddDTO);
         invoice.setCustomer(customer);
         invoice.setInvoiceDate(LocalDateTime.of(invoiceAddDTO.getInvoiceDate(), LocalTime.MIDNIGHT));
@@ -121,6 +124,21 @@ public class InvoiceServiceImpl implements InvoiceService {
                 .map(p -> {
                     Product product = productRepository.findById(p.getProductId())
                             .orElseThrow(() -> new RuntimeException("Product not found"));
+
+                    if ("INACTIVE".equals(customer.getStatus().name())
+                            && "INACTIVE".equals(product.getStatus().name())) {
+                        throw new IllegalArgumentException(
+                                "Both Customer and Product " + product.getName() + " are inactive");
+                    }
+
+                    if ("INACTIVE".equals(customer.getStatus().name())) {
+                        throw new IllegalArgumentException("Customer is inactive");
+                    }
+
+                    if ("INACTIVE".equals(product.getStatus().name())) {
+                        throw new IllegalArgumentException("Product " + product.getName() + " is inactive");
+                    }
+
                     InvoiceProduct invoiceProduct = invoiceProductMapper.toInvoiceProduct(p, savedInvoice, product);
                     invoiceProduct.setInvoice(savedInvoice);
                     return invoiceProduct;
@@ -129,7 +147,6 @@ public class InvoiceServiceImpl implements InvoiceService {
         List<InvoiceProduct> savedInvoiceProducts = invoiceProductRepository.saveAll(invoiceProducts);
 
         savedInvoice.setInvoiceProducts(savedInvoiceProducts);
-
 
         return invoiceMapper.toInvoiceAddDTO(invoiceRepository.save(savedInvoice));
     }
