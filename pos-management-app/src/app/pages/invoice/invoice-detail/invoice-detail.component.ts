@@ -1,5 +1,5 @@
 import { CommonModule, NgFor, NgIf } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { InvoiceEditComponent } from '../invoice-edit/invoice-edit.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { InvoiceService } from '../../../services/invoice.service';
@@ -19,6 +19,7 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 })
 export class InvoiceDetailComponent implements OnInit{
   invoice: any;
+  selectedProductId: number | null = null;
 
   themeClass = 'ag-theme-alpine';
 
@@ -41,6 +42,8 @@ export class InvoiceDetailComponent implements OnInit{
 
   public paginationPageSize = 10;
   public paginationPageSizeSelector: number[] | boolean = [10, 25, 50];
+
+  @ViewChild('agGrid') agGrid!: AgGridAngular;
 
   constructor(
     private route: ActivatedRoute,
@@ -68,6 +71,10 @@ export class InvoiceDetailComponent implements OnInit{
 
   onInvoiceUpdated(updatedInvoice: any): void {
     this.invoice = updatedInvoice;
+    this.rowData = [...updatedInvoice.products];
+    if (this.agGrid && this.agGrid.api) {
+      this.agGrid.api.refreshCells({ force: true}); // Update AG Grid
+    }
   }
 
   goBack(): void {
@@ -75,5 +82,6 @@ export class InvoiceDetailComponent implements OnInit{
   }
 
   onCellClicked(event: any): void {
+    this.selectedProductId = event.data.productId;
   }
 }

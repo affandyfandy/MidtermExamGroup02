@@ -37,10 +37,6 @@ export class InvoiceService {
     return this.http.delete<void>(`${baseUrl}/${id}`);
   }
 
-  getInvoiceProducts(invoiceId: string): Observable<InvoiceProduct[]> {
-    return this.http.get<InvoiceProduct[]>(`${baseUrl}/${invoiceId}/products`);
-  }
-
   exportInvoiceToExcel(customerId: string, month: number, year: number): Observable<Blob> {
     let params = new HttpParams();
 
