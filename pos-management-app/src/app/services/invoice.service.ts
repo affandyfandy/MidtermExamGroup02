@@ -61,4 +61,8 @@ export class InvoiceService {
 
     return this.http.get(`${baseUrl}/excel`, { params, responseType: 'blob' });
   }
+
+  exportInvoiceToPdf(id: any): Observable<Blob> {
+    return this.http.get(`${baseUrl}/${id}/pdf`, { responseType: 'blob' });
+  }
 }

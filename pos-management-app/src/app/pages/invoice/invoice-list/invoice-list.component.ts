@@ -76,6 +76,8 @@ export class InvoiceListComponent {
       this.editInvoice(event.data);
     } else if (action === 'delete') {
       this.deleteInvoice(event.data);
+    } else if (action === 'pdf') {
+      this.exportInvoiceToPdf(event.data);
     }
   }
 
@@ -107,7 +109,7 @@ export class InvoiceListComponent {
     }
   }
 
-  openExportDialog(): void {
+  openExportExcelDialog(): void {
     const dialogRef = this.dialog.open(ExportDialogComponent, { });
 
     dialogRef.afterClosed().subscribe((result) => {
@@ -116,7 +118,7 @@ export class InvoiceListComponent {
           const url = window.URL.createObjectURL(blob);
           const a = document.createElement('a');
           a.href = url;
-          a.download = 'invoice.xlsx';
+          a.download = `invoice${result.customer? '-' + result.customer:''}${result.month? '-' + result.month:''}${result.year? '-' + result.year:''}.xlsx`;
           a.click();
 
           this.snackBar.open('Exported successfully!', 'Close', {
@@ -133,6 +135,28 @@ export class InvoiceListComponent {
           });
         });
       }
+    });
+  }
+
+  exportInvoiceToPdf(invoice: any): void {
+    this.invoiceService.exportInvoiceToPdf(invoice.id).subscribe((blob) => {
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `invoice-${invoice.id}.pdf`;
+      a.click();
+
+      this.snackBar.open('Exported successfully!', 'Close', {
+        duration: 3000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top'
+      });
+    }, (error) => {
+      this.snackBar.open('Export failed. Please try again', 'Close', {
+        duration: 3000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top'
+      });
     });
   }
 }
