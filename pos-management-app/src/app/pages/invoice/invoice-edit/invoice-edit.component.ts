@@ -20,6 +20,7 @@ export class InvoiceEditComponent {
 
   constructor(private invoiceService: InvoiceService, private router: Router) {}
 
+
   onProductChange(index: number): void {
     this.selectedProductIndex = index;
   }
@@ -42,15 +43,18 @@ export class InvoiceEditComponent {
 
   updateInvoice(): void {
     this.invoice.updatedTime = getCurrentTimestamp();
-
-    // Loop through each product and update individually
     this.invoice.products.forEach((product: any) => {
-      this.invoiceService.update(this.invoice.id, product.id, product)
+      this.invoiceService.update(this.invoice.invoiceId, product.productId, product)
         .subscribe(updatedProduct => {
-          console.log(`Product ${updatedProduct.name} updated successfully`);
+          this.invoiceUpdated.emit(updatedProduct);
+          alert("Invoice Updated");
+          this.router.navigate(['/invoices']);
+        }, error => {
+          console.error('Error updating product:', error);
         });
     });
   }
+
 
   deleteInvoice(): void {
     if (confirm('Do you want to delete this data?')) {

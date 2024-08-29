@@ -16,6 +16,8 @@ public interface InvoiceProductMapper {
                         @Mapping(source = "invoice.id", target = "invoiceId"),
                         @Mapping(source = "product.id", target = "productId"),
                         @Mapping(source = "product.name", target = "productName"),
+                        @Mapping(source = "product.price", target = "price"),
+
         })
         InvoiceProductDTO toInvoiceProductDTO(InvoiceProduct invoiceProduct);
 
@@ -23,12 +25,14 @@ public interface InvoiceProductMapper {
                         @Mapping(source = "invoiceId", target = "invoice.id"),
                         @Mapping(source = "productId", target = "product.id"),
                         @Mapping(source = "productName", target = "product.name"),
+                        @Mapping(source = "price", target = "product.price")
         })
         InvoiceProduct toInvoiceProduct(InvoiceProductDTO invoiceProductDTO, @Context Invoice invoice,
                         @Context Product product);
 
         @Mappings({
                         @Mapping(source = "invoice.id", target = "invoiceId"),
+                        @Mapping(source = "product.id", target = "productId"),
                         @Mapping(source = "product.name", target = "productName"),
                         @Mapping(source = "quantity", target = "quantity"),
                         @Mapping(source = "amount", target = "amount"),
@@ -43,6 +47,7 @@ public interface InvoiceProductMapper {
                         @Mapping(source = "amount", target = "amount"),
                         @Mapping(source = "price", target = "product.price")
         })
-        InvoiceProduct toInvoiceProduct(InvoiceProductWithoutProductIdDTO invoiceProductWithoutProductIdDTO, @Context Invoice invoice,
-                                        @Context Product product);
+        InvoiceProduct toInvoiceProduct(InvoiceProductWithoutProductIdDTO invoiceProductWithoutProductIdDTO,
+                        @Context Invoice invoice,
+                        @Context Product product);
 }
