@@ -48,6 +48,9 @@ export class InvoiceAddComponent {
   loadCustomers() {
     this.customerService.getAll().subscribe(customers => {
       this.customers = customers;
+      if (this.customers.length > 0) {
+        this.invoiceForm.get('customer_id')?.setValue(this.customers[0].id);
+      }
     });
   }
 
@@ -55,6 +58,19 @@ export class InvoiceAddComponent {
     this.productService.getAll().subscribe(products => {
       this.products = products;
     });
+  }
+
+  onProductSelect(event: Event) {
+    const selectedProductId = (event.target as HTMLSelectElement).value;
+    const product = this.products.find(p => p.id === selectedProductId);
+
+    if (product) {
+      this.addProduct(product);
+    }
+  }
+
+  getProductById(productId: string): Product | undefined {
+    return this.products.find(p => p.id === productId);
   }
 
   get selectedProducts(): FormArray {
