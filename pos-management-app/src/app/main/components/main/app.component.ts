@@ -23,7 +23,6 @@ export class AppComponent {
   constructor(public router:Router) {}
 
   isLoginPage(): boolean {
-    console.log(this.router.url);
     return this.router.url === '/login';
   }
 }

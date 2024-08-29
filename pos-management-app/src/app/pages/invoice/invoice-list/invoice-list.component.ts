@@ -10,11 +10,13 @@ import { Router } from '@angular/router';
 
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-alpine.css';
+import { ExportDialogComponent } from '../../../main/components/dialog/export-dialog/export-dialog.component';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-invoice-list',
   standalone: true,
-  imports: [CommonModule, AgGridAngular, MatDialogModule],
+  imports: [CommonModule, AgGridAngular, MatDialogModule, MatSnackBarModule],
   templateUrl: './invoice-list.component.html',
   styleUrls: ['./invoice-list.component.scss'],
   encapsulation: ViewEncapsulation.None
@@ -54,7 +56,7 @@ export class InvoiceListComponent {
 
   rowData: any[] = [];
 
-  constructor(private invoiceService: InvoiceService, private router: Router, private dialog: MatDialog) {
+  constructor(private invoiceService: InvoiceService, private router: Router, private dialog: MatDialog, private snackBar: MatSnackBar) {
     ModuleRegistry.registerModules([ClientSideRowModelModule]);
   }
 
@@ -103,5 +105,34 @@ export class InvoiceListComponent {
         }
       });
     }
+  }
+
+  openExportDialog(): void {
+    const dialogRef = this.dialog.open(ExportDialogComponent, { });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.invoiceService.exportInvoiceToExcel(result.customer, result.month, result.year).subscribe((blob) => {
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'invoice.xlsx';
+          a.click();
+
+          this.snackBar.open('Exported successfully!', 'Close', {
+            duration: 3000,
+            horizontalPosition: 'center',
+            verticalPosition: 'top'
+          });
+        },
+        (error) => {
+          this.snackBar.open('Export failed. Please try again', 'Close', {
+            duration: 3000,
+            horizontalPosition: 'center',
+            verticalPosition: 'top'
+          });
+        });
+      }
+    });
   }
 }
