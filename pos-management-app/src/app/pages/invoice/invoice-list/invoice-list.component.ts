@@ -10,11 +10,13 @@ import { Router } from '@angular/router';
 
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-alpine.css';
+import { ExportDialogComponent } from '../../../main/components/dialog/export-dialog/export-dialog.component';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-invoice-list',
   standalone: true,
-  imports: [CommonModule, AgGridAngular, MatDialogModule],
+  imports: [CommonModule, AgGridAngular, MatDialogModule, MatSnackBarModule],
   templateUrl: './invoice-list.component.html',
   styleUrls: ['./invoice-list.component.scss'],
   encapsulation: ViewEncapsulation.None
@@ -54,7 +56,7 @@ export class InvoiceListComponent {
 
   rowData: any[] = [];
 
-  constructor(private invoiceService: InvoiceService, private router: Router, private dialog: MatDialog) {
+  constructor(private invoiceService: InvoiceService, private router: Router, private dialog: MatDialog, private snackBar: MatSnackBar) {
     ModuleRegistry.registerModules([ClientSideRowModelModule]);
   }
 
@@ -74,6 +76,8 @@ export class InvoiceListComponent {
       this.editInvoice(event.data);
     } else if (action === 'delete') {
       this.deleteInvoice(event.data);
+    } else if (action === 'pdf') {
+      this.exportInvoiceToPdf(event.data);
     }
   }
 
@@ -103,5 +107,56 @@ export class InvoiceListComponent {
         }
       });
     }
+  }
+
+  openExportExcelDialog(): void {
+    const dialogRef = this.dialog.open(ExportDialogComponent, { });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.invoiceService.exportInvoiceToExcel(result.customer, result.month, result.year).subscribe((blob) => {
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `invoice${result.customer? '-' + result.customer:''}${result.month? '-' + result.month:''}${result.year? '-' + result.year:''}.xlsx`;
+          a.click();
+
+          this.snackBar.open('Exported successfully!', 'Close', {
+            duration: 3000,
+            horizontalPosition: 'center',
+            verticalPosition: 'top'
+          });
+        },
+        (error) => {
+          this.snackBar.open('Export failed. Please try again', 'Close', {
+            duration: 3000,
+            horizontalPosition: 'center',
+            verticalPosition: 'top'
+          });
+        });
+      }
+    });
+  }
+
+  exportInvoiceToPdf(invoice: any): void {
+    this.invoiceService.exportInvoiceToPdf(invoice.id).subscribe((blob) => {
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `invoice-${invoice.id}.pdf`;
+      a.click();
+
+      this.snackBar.open('Exported successfully!', 'Close', {
+        duration: 3000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top'
+      });
+    }, (error) => {
+      this.snackBar.open('Export failed. Please try again', 'Close', {
+        duration: 3000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top'
+      });
+    });
   }
 }
