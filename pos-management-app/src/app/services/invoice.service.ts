@@ -33,7 +33,7 @@ export class InvoiceService {
     return this.http.post(baseUrl, data);
   }
 
-  deleteInvoice(id: string): Observable<void> {
+  deleteInvoice(id: any): Observable<void> {
     return this.http.delete<void>(`${baseUrl}/${id}`);
   }
 
