@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { InvoiceService } from '../../../services/invoice.service';
-import { Router } from '@angular/router'
+import { ActivatedRoute, Router } from '@angular/router'
 import { getCurrentTimestamp } from '../../../core/util/date-time.util';
 import { ProductService } from '../../../services/product.service';
 
@@ -19,8 +19,20 @@ export class InvoiceEditComponent {
 
   selectedProductIndex: number | null = null;
 
-  constructor(private invoiceService: InvoiceService, private router: Router) {}
+  constructor(
+    private invoiceService: InvoiceService,
+    private router: Router,
+    private route: ActivatedRoute
+  ) {}
 
+  ngOnInit(): void {
+    const invoiceId = this.route.snapshot.paramMap.get('id');
+    if (invoiceId) {
+      this.invoiceService.get(invoiceId).subscribe(invoice => {
+        this.invoice = invoice;
+      });
+    }
+  }
 
   onProductChange(index: number): void {
     this.selectedProductIndex = index;
@@ -59,11 +71,9 @@ export class InvoiceEditComponent {
     });
   }
 
-
-
   deleteInvoice(): void {
-    if (confirm('Do you want to delete this data?')) {
-      this.invoiceService.deleteInvoice(this.invoice.id).subscribe(() => {
+    if (confirm('Do you want to delete this invoice?')) {
+      this.invoiceService.deleteInvoice(this.invoice.invoiceId).subscribe(() => {
         alert("Invoice deleted!");
         this.router.navigate(['/invoice']);
       });
