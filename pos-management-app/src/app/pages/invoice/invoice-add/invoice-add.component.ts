@@ -119,6 +119,11 @@ export class InvoiceAddComponent {
     this.dialogRef.close(false);
   }
 
+  getProductName(productId: number): string {
+    const product = this.products.find(p => p.id === productId);
+    return product ? product.name : 'Unknown Product';
+  }
+
   asFormGroup(control: AbstractControl): FormGroup {
     return control as FormGroup;
   }
