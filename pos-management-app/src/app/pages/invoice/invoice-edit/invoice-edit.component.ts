@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { InvoiceService } from '../../../services/invoice.service';
 import { Router } from '@angular/router'
 import { getCurrentTimestamp } from '../../../core/util/date-time.util';
+import { ProductService } from '../../../services/product.service';
 
 @Component({
   selector: 'app-invoice-edit',
@@ -43,6 +44,8 @@ export class InvoiceEditComponent {
 
   updateInvoice(): void {
     this.invoice.updatedTime = getCurrentTimestamp();
+
+    // Iterate through the products and update them
     this.invoice.products.forEach((product: any) => {
       this.invoiceService.update(this.invoice.invoiceId, product.productId, product)
         .subscribe(updatedProduct => {
@@ -52,6 +55,11 @@ export class InvoiceEditComponent {
         }, error => {
           console.error('Error updating product:', error);
         });
+
+      // Alerting the correct properties
+      alert(`Invoice ID: ${this.invoice.invoiceId}`);
+      alert(`Product ID: ${product.productId}`);
+      alert(`Quantity: ${product.quantity}`);
     });
   }
 
