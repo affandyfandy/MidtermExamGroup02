@@ -35,6 +35,20 @@ export class CustomerListComponent implements OnInit {
         textCustomComparator: (filter: string, value: string, filterText: string) => {
           return value === filterText;
         }
+      },
+      cellRenderer: (params: any) => {
+        const isActive = params.value === 'ACTIVE';
+        const switchId = `statusSwitch-${params.node.id}`;
+        
+        return `<div class="form-switch row align-items-center">
+            <input class="form-check-input col flex-grow-0" type="checkbox" role="switch" id="${switchId}" ${isActive ? 'checked' : ''}>
+            <label class="form-check-label col" for="${switchId}">${params.value}</label>
+          </div>`;
+      },
+      cellRendererParams: {
+        onStatusChange: (customer: any) => {
+          customer.status = customer.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE';
+        }
       }
      },
     {
@@ -42,9 +56,6 @@ export class CustomerListComponent implements OnInit {
       cellRenderer: (params: any) => {
         return `
           <button class="btn-edit" data-action="edit">Edit</button>
-          <button class="btn-toggle" data-action="toggle">
-            ${params.data.status === 'ACTIVE' ? 'Deactivate' : 'Activate'}
-          </button>
           <button class="btn-delete" data-action="delete">Delete</button>
         `;
       },
@@ -84,10 +95,10 @@ export class CustomerListComponent implements OnInit {
     const action = event.event.target.getAttribute('data-action');
     if (action === 'edit') {
       this.editCustomer(event.data);
-    } else if (action === 'toggle') {
-      this.toggleCustomerStatus(event.data);
     } else if (action === 'delete') {
       this.deleteCustomer(event.data);
+    } else if (event.colDef.field === 'status') {
+      this.toggleCustomerStatus(event.data);
     }
   }
 
