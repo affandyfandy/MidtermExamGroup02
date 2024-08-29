@@ -1,10 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { InvoiceService } from '../../../services/invoice.service';
 import { ActivatedRoute, Router } from '@angular/router'
 import { getCurrentTimestamp } from '../../../core/util/date-time.util';
 import { ProductService } from '../../../services/product.service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-invoice-edit',
@@ -13,8 +15,9 @@ import { ProductService } from '../../../services/product.service';
   templateUrl: './invoice-edit.component.html',
   styleUrl: './invoice-edit.component.scss'
 })
-export class InvoiceEditComponent {
+export class InvoiceEditComponent implements OnChanges {
   @Input() invoice: any;
+  @Input() productId: number | null = null;
   @Output() invoiceUpdated = new EventEmitter<any>();
 
   selectedProductIndex: number | null = null;
@@ -22,7 +25,8 @@ export class InvoiceEditComponent {
   constructor(
     private invoiceService: InvoiceService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
@@ -43,6 +47,7 @@ export class InvoiceEditComponent {
       const product = this.invoice.products[this.selectedProductIndex];
       product.amount = product.quantity * product.price;
       this.updateInvoiceAmount();
+      this.invoiceUpdated.emit(this.invoice);
     }
   }
 
@@ -64,8 +69,18 @@ export class InvoiceEditComponent {
             alert("Invoice Updated");
             this.router.navigate(['/invoice']);
           },
-          error: (error) => {
-            console.error('Error updating product:', error);
+          error: (errorResponse: HttpErrorResponse) => {
+            if (errorResponse.error && errorResponse.error.errors) {
+              const errorMessage = errorResponse.error.errors;
+              this.snackBar.open(errorMessage, 'Close', {
+                duration: 2000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top',
+                panelClass: 'snackbar'
+              }); 
+            } else {
+              console.log('Unexpected error structure:', errorResponse);
+            }
           }
         });
     });
@@ -77,6 +92,12 @@ export class InvoiceEditComponent {
         alert("Invoice deleted!");
         this.router.navigate(['/invoice']);
       });
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['productId'] && changes['productId'].currentValue) {
+      this.selectedProductIndex = this.invoice.products.findIndex((product: any) => product.productId === this.productId);
     }
   }
 }

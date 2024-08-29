@@ -12,7 +12,7 @@
   </div>
 
   <div class="invoice-edit col-5">
-    <app-invoice-edit [invoice]="invoice" (invoiceUpdated)="onInvoiceUpdated($event)"></app-invoice-edit>
+    <app-invoice-edit [invoice]="invoice" [productId]="selectedProductId" (invoiceUpdated)="onInvoiceUpdated($event)"></app-invoice-edit>
   </div>
 
   <div class="invoice-product col-12">
