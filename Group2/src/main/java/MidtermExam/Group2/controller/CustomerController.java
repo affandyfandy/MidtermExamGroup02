@@ -14,6 +14,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/api/v1/customers")
 public class CustomerController {
 
@@ -44,7 +45,8 @@ public class CustomerController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CustomerDTO> editCustomer(@PathVariable UUID id, @Valid @RequestBody CustomerDTO customerDTO) {
+    public ResponseEntity<CustomerDTO> editCustomer(@PathVariable UUID id,
+            @Valid @RequestBody CustomerDTO customerDTO) {
         Optional<CustomerDTO> updatedCustomer = customerService.editCustomer(id, customerDTO);
         return updatedCustomer.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
@@ -66,7 +68,7 @@ public class CustomerController {
 
         if (customer.isPresent()) {
             customerService.deleteCustomer(id);
-            return ResponseEntity.ok("Customer record deleted successfully.");
+            return ResponseEntity.noContent().build();
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Customer not found.");
         }

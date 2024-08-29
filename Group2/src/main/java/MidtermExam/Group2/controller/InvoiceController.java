@@ -1,6 +1,7 @@
 package MidtermExam.Group2.controller;
 
 import MidtermExam.Group2.criteria.InvoiceSearchCriteria;
+import MidtermExam.Group2.dto.InvoiceAddDTO;
 import MidtermExam.Group2.dto.InvoiceDTO;
 import MidtermExam.Group2.dto.InvoiceDetailDTO;
 import MidtermExam.Group2.dto.InvoiceListDTO;
@@ -14,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -25,9 +27,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
-import java.util.UUID;
-
 @RestController
+@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/api/v1/invoices")
 public class InvoiceController {
     private final InvoiceService invoiceService;
@@ -58,10 +59,34 @@ public class InvoiceController {
         }
     }
 
-    @PostMapping
-    public ResponseEntity<?> addInvoice(@Valid @RequestBody InvoiceDTO invoiceDTO) {
+    @PostMapping("/single")
+    public ResponseEntity<?> addSingleInvoice(@Valid @RequestBody InvoiceDTO invoiceDTO) {
         try {
-            InvoiceDTO addedInvoice = invoiceService.addInvoice(invoiceDTO);
+            InvoiceDTO addedInvoice = invoiceService.addSingleInvoice(invoiceDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body(addedInvoice);
+        } catch (RuntimeException e) {
+            Map<String, String> response = new HashMap<>();
+            response.put("errors", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteInvoice(@PathVariable UUID id) {
+        Optional<InvoiceDTO> invoice = Optional.ofNullable(invoiceService.getInvoiceById(id));
+
+        if (invoice.isPresent()) {
+            invoiceService.deleteInvoice(id);
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product not found.");
+        }
+    }
+
+    @PostMapping
+    public ResponseEntity<?> addInvoice(@Valid @RequestBody InvoiceAddDTO invoiceAddDTO) {
+        try {
+            InvoiceAddDTO addedInvoice = invoiceService.addInvoice(invoiceAddDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(addedInvoice);
         } catch (RuntimeException e) {
             Map<String, String> response = new HashMap<>();
@@ -85,8 +110,8 @@ public class InvoiceController {
 
     @GetMapping("/excel")
     public ResponseEntity<?> exportInvoicesToExcel(@RequestParam(required = false) UUID customerId,
-                                                   @RequestParam(required = false) Integer month,
-                                                   @RequestParam(required = false) Integer year) {
+            @RequestParam(required = false) Integer month,
+            @RequestParam(required = false) Integer year) {
         try {
             ByteArrayInputStream excelFile = exportService.exportInvoicesToExcel(customerId, month, year);
 
