@@ -12,9 +12,14 @@ const baseUrlProduct = 'http://localhost:8080/api/v1/invoice-products';
 export class InvoiceService {
   constructor(private http : HttpClient) {}
 
+  // getInvoices(): Observable<Invoice[]> {
+  //   return this.http.get<any>(baseUrl)
+  //     .pipe(map(response => response.content));
+  // }
+
   getInvoices(): Observable<Invoice[]> {
-    return this.http.get<any>(baseUrl)
-      .pipe(map(response => response.content));
+    return this.http.get<any>(baseUrl + "/list")
+      .pipe(map(response => response));
   }
 
   get(id: any): Observable<any> {

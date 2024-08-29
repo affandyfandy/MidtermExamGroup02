@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -28,6 +29,12 @@ public class CustomerController {
     @GetMapping
     public ResponseEntity<Page<CustomerDTO>> getAllCustomers(Pageable pageable) {
         Page<CustomerDTO> customers = customerService.getAllCustomers(pageable);
+        return ResponseEntity.ok(customers);
+    }
+
+    @GetMapping("/list")
+    public ResponseEntity<List<CustomerDTO>> getAllCustomersList() {
+        List<CustomerDTO> customers = customerService.getAllCustomersList();
         return ResponseEntity.ok(customers);
     }
 

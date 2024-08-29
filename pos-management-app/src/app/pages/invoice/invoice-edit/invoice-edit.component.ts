@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { InvoiceService } from '../../../services/invoice.service';
 import { ActivatedRoute, Router } from '@angular/router'
 import { getCurrentTimestamp } from '../../../core/util/date-time.util';
-import { ProductService } from '../../../services/product.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
@@ -73,11 +72,11 @@ export class InvoiceEditComponent implements OnChanges {
             if (errorResponse.error && errorResponse.error.errors) {
               const errorMessage = errorResponse.error.errors;
               this.snackBar.open(errorMessage, 'Close', {
-                duration: 2000,
+                duration: 4000,
                 horizontalPosition: 'center',
                 verticalPosition: 'top',
                 panelClass: 'snackbar'
-              }); 
+              });
             } else {
               console.log('Unexpected error structure:', errorResponse);
             }

@@ -38,6 +38,12 @@ public class ProductController {
         return ResponseEntity.ok(products);
     }
 
+    @GetMapping("/list")
+    public ResponseEntity<List<ProductDTO>> getAllProductsList() {
+        List<ProductDTO> products = productService.getAllProductsList();
+        return ResponseEntity.ok(products);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<ProductDTO> getProductById(@PathVariable UUID id) {
         Optional<ProductDTO> product = productService.getProductById(id);
