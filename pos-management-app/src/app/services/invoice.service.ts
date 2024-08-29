@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { Invoice } from '../models/invoice';
@@ -42,5 +42,23 @@ export class InvoiceService {
 
   getInvoiceProducts(invoiceId: string): Observable<InvoiceProduct[]> {
     return this.http.get<InvoiceProduct[]>(`${baseUrl}/${invoiceId}/products`);
+  }
+
+  exportInvoiceToExcel(customerId: string, month: number, year: number): Observable<Blob> {
+    let params = new HttpParams();
+
+    if (customerId) {
+      params = params.set('customerId', customerId);
+    }
+
+    if (month) {
+      params = params.set('month', month.toString());
+    }
+
+    if (year) {
+      params = params.set('year', year.toString());
+    }
+
+    return this.http.get(`${baseUrl}/excel`, { params, responseType: 'blob' });
   }
 }
