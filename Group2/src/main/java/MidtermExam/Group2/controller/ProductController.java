@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import jakarta.validation.Valid;
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -31,10 +32,7 @@ public class ProductController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<ProductDTO>> getAllProducts(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        Pageable pageable = PageRequest.of(page, size);
+    public ResponseEntity<Page<ProductDTO>> getAllProducts(Pageable pageable) {
         Page<ProductDTO> products = productService.getAllProducts(pageable);
         return ResponseEntity.ok(products);
     }

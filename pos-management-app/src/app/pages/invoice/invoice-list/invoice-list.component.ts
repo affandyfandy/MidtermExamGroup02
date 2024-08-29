@@ -24,7 +24,7 @@ export class InvoiceListComponent {
 
   colDefs: ColDef[] = [
     { field: 'id', sortable: true, filter: true },
-    { headerName: 'Customer Name', valueGetter: (params) => params.data.customer.name, sortable: true, filter: 'agTextColumnFilter' },
+    { field: 'customerName', headerName: 'Customer Name', sortable: true, filter: 'agTextColumnFilter' },
     { field: 'invoiceAmount', headerName: 'Invoice Amount', sortable: true, filter: 'agNumberColumnFilter' },
     { field: 'invoiceDate', headerName: 'Invoice Date', sortable: true, filter: 'agDateColumnFilter' },
     {

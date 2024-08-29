@@ -167,4 +167,9 @@ public class InvoiceServiceImpl implements InvoiceService {
             throw new RuntimeException("Invoice not found");
         }
     }
+
+    @Override
+    public void deleteInvoice(UUID id) {
+        invoiceRepository.deleteById(id);
+    }
 }
