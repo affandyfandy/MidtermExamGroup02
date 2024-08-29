@@ -30,10 +30,6 @@ export class InvoiceService {
     return this.http.put(`${baseUrlProduct}/${invoiceId}/${productId}`, data);
   }
 
-  updateInvoice(invoiceId: any, invoice: any): Observable<any> {
-    return this.http.put(`${baseUrl}/${invoiceId}`, invoice);
-  }
-
   create(data: any): Observable<any> {
     return this.http.post(baseUrl, data);
   }
