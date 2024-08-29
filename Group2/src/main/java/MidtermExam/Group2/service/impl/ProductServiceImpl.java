@@ -40,11 +40,13 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findAll(pageable).map(productMapper::toDTO);
     }
 
-    // @Override
-    // public Page<ProductDTO> getAllProducts(Pageable pageable) {
-    // Page<Product> products = productRepository.findAll(pageable);
-    // return products.map(productMapper::toDTO);
-    // }
+    @Override
+    public List<ProductDTO> getAllProductsList() {
+        List<Product> products = productRepository.findAll();
+        return products.stream()
+                .map(productMapper::toDTO)
+                .collect(Collectors.toList());
+    }
 
     @Override
     public Optional<ProductDTO> getProductById(UUID id) {

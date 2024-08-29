@@ -4,23 +4,27 @@
     <form [formGroup]="invoiceForm" (ngSubmit)="onSubmit()">
       <div>
         <label for="customer_id">Customer:</label>
-        <select id="customer_id" formControlName="customer_id">
+        <br>
+        <select id="customer_id" formControlName="customer_id" class="form-control">
           <option *ngFor="let customer of customers" [value]="customer.id">{{ customer.name }}</option>
         </select>
       </div>
 
       <div>
-        <label>Products:</label>
-        <div *ngFor="let product of products">
-          <button class="btn-product" type="button" (click)="addProduct(product)">{{ product.name }}</button>
-        </div>
+        <label for="product_id">Products:</label>
+        <br>
+        <select id="product_id" (change)="onProductSelect($event)" class="form-control">
+          <option *ngFor="let product of products" [value]="product.id">{{ product.name }}</option>
+        </select>
       </div>
 
       <div *ngFor="let selectedProduct of selectedProducts.controls; let i = index">
         <ng-container [formGroup]="asFormGroup(selectedProduct)">
-          <label>{{ getProductName(asFormGroup(selectedProduct).get('product_id')?.value) }}</label>
-          <input formControlName="quantity" type="number" />
-          <input formControlName="amount" type="number" [attr.disabled]="true" />
+          <label>{{ getProductById(asFormGroup(selectedProduct).get('product_id')?.value)?.name }}</label>
+          <br>
+          <input formControlName="quantity" type="number" class="product-control" />
+          <br>
+          <input formControlName="amount" type="number" [attr.disabled]="true" class="product-control"/>
           <button class="btn-remove" type="button" (click)="removeProduct(i)">Remove</button>
         </ng-container>
       </div>
@@ -28,7 +32,8 @@
 
       <div>
         <label for="invoice_amount">Invoice Amount:</label>
-        <input id="invoice_amount" formControlName="invoice_amount" type="number" [attr.disabled]="true" />
+        <br>
+        <input name="invoice_amount" id="invoice_amount" formControlName="invoice_amount" type="number" [attr.disabled]="true" class="form-control"/>
       </div>
 
       <div class="btn">

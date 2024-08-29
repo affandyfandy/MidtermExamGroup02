@@ -2,9 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { InvoiceService } from '../../../services/invoice.service';
-import { Router } from '@angular/router'
+import { ActivatedRoute, Router } from '@angular/router'
 import { getCurrentTimestamp } from '../../../core/util/date-time.util';
-import { ProductService } from '../../../services/product.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
@@ -22,7 +21,21 @@ export class InvoiceEditComponent implements OnChanges {
 
   selectedProductIndex: number | null = null;
 
-  constructor(private invoiceService: InvoiceService, private router: Router, private snackBar: MatSnackBar) {}
+  constructor(
+    private invoiceService: InvoiceService,
+    private router: Router,
+    private route: ActivatedRoute,
+    private snackBar: MatSnackBar
+  ) {}
+
+  ngOnInit(): void {
+    const invoiceId = this.route.snapshot.paramMap.get('id');
+    if (invoiceId) {
+      this.invoiceService.get(invoiceId).subscribe(invoice => {
+        this.invoice = invoice;
+      });
+    }
+  }
 
   onProductChange(index: number): void {
     this.selectedProductIndex = index;
@@ -59,11 +72,11 @@ export class InvoiceEditComponent implements OnChanges {
             if (errorResponse.error && errorResponse.error.errors) {
               const errorMessage = errorResponse.error.errors;
               this.snackBar.open(errorMessage, 'Close', {
-                duration: 2000,
+                duration: 4000,
                 horizontalPosition: 'center',
                 verticalPosition: 'top',
                 panelClass: 'snackbar'
-              }); 
+              });
             } else {
               console.log('Unexpected error structure:', errorResponse);
             }
@@ -72,11 +85,9 @@ export class InvoiceEditComponent implements OnChanges {
     });
   }
 
-
-
   deleteInvoice(): void {
-    if (confirm('Do you want to delete this data?')) {
-      this.invoiceService.deleteInvoice(this.invoice.id).subscribe(() => {
+    if (confirm('Do you want to delete this invoice?')) {
+      this.invoiceService.deleteInvoice(this.invoice.invoiceId).subscribe(() => {
         alert("Invoice deleted!");
         this.router.navigate(['/invoice']);
       });

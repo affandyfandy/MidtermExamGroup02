@@ -11,9 +11,15 @@ const baseUrl = 'http://localhost:8080/api/v1/products';
 export class ProductService {
   constructor(private http : HttpClient) {}
 
+  // getAll(): Observable<Product[]> {
+  //   return this.http.get<any>(baseUrl).pipe(
+  //     map(response => response.content)
+  //   );
+  // }
+
   getAll(): Observable<Product[]> {
-    return this.http.get<any>(baseUrl).pipe(
-      map(response => response.content)
+    return this.http.get<any>(baseUrl + "/list").pipe(
+      map(response => response)
     );
   }
 

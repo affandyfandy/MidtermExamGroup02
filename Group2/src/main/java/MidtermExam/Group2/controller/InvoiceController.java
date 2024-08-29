@@ -14,6 +14,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -45,6 +46,12 @@ public class InvoiceController {
     @GetMapping
     public ResponseEntity<Page<InvoiceListDTO>> getAllInvoices(Pageable pageable, InvoiceSearchCriteria criteria) {
         return ResponseEntity.ok(invoiceService.getAllInvoices(pageable, criteria));
+    }
+
+    @GetMapping("/list")
+    public ResponseEntity<List<InvoiceListDTO>> getAllInvoicesList(InvoiceSearchCriteria criteria) {
+        List<InvoiceListDTO> invoices = invoiceService.getAllInvoicesList(criteria);
+        return ResponseEntity.ok(invoices);
     }
 
     @GetMapping("/{id}")

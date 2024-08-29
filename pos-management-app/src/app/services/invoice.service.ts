@@ -12,9 +12,14 @@ const baseUrlProduct = 'http://localhost:8080/api/v1/invoice-products';
 export class InvoiceService {
   constructor(private http : HttpClient) {}
 
+  // getInvoices(): Observable<Invoice[]> {
+  //   return this.http.get<any>(baseUrl)
+  //     .pipe(map(response => response.content));
+  // }
+
   getInvoices(): Observable<Invoice[]> {
-    return this.http.get<any>(baseUrl)
-      .pipe(map(response => response.content));
+    return this.http.get<any>(baseUrl + "/list")
+      .pipe(map(response => response));
   }
 
   get(id: any): Observable<any> {
@@ -25,15 +30,11 @@ export class InvoiceService {
     return this.http.put(`${baseUrlProduct}/${invoiceId}/${productId}`, data);
   }
 
-  updateInvoice(invoiceId: any, invoice: any): Observable<any> {
-    return this.http.put(`${baseUrl}/${invoiceId}`, invoice);
-  }
-
   create(data: any): Observable<any> {
     return this.http.post(baseUrl, data);
   }
 
-  deleteInvoice(id: string): Observable<void> {
+  deleteInvoice(id: any): Observable<void> {
     return this.http.delete<void>(`${baseUrl}/${id}`);
   }
 

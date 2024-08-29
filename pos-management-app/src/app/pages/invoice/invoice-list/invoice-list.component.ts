@@ -12,11 +12,13 @@ import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-alpine.css';
 import { ExportDialogComponent } from '../../../main/components/dialog/export-dialog/export-dialog.component';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { RevenueInputDialogComponent } from '../../../main/components/dialog/revenue-input-dialog/revenue-input-dialog.component';
+import { RevenueService } from '../../../services/revenue.service';
 
 @Component({
   selector: 'app-invoice-list',
   standalone: true,
-  imports: [CommonModule, AgGridAngular, MatDialogModule, MatSnackBarModule],
+  imports: [CommonModule, AgGridAngular, MatSnackBarModule],
   templateUrl: './invoice-list.component.html',
   styleUrls: ['./invoice-list.component.scss'],
   encapsulation: ViewEncapsulation.None
@@ -56,7 +58,7 @@ export class InvoiceListComponent {
 
   rowData: any[] = [];
 
-  constructor(private invoiceService: InvoiceService, private router: Router, private dialog: MatDialog, private snackBar: MatSnackBar) {
+  constructor(private invoiceService: InvoiceService, private revenueService: RevenueService, private router: Router, private dialog: MatDialog, private snackBar: MatSnackBar) {
     ModuleRegistry.registerModules([ClientSideRowModelModule]);
   }
 
@@ -107,6 +109,63 @@ export class InvoiceListComponent {
         }
       });
     }
+  }
+
+  openRevenueInputDialog(): void {
+    const dialogRef = this.dialog.open(RevenueInputDialogComponent, {
+      width: '300px'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        if (result.date) {
+          this.fetchRevenueByDay(result.date);
+        } else if (result.year && result.month) {
+          this.fetchRevenueByMonth(result.year, result.month);
+        } else if (result.year) {
+          this.fetchRevenueByYear(result.year);
+        }
+      }
+    });
+  }
+
+  fetchRevenueByDay(date: string): void {
+    this.revenueService.getRevenueByDay(date).subscribe(revenue => {
+      console.log('Revenue by day:', revenue);
+      const message = `Revenue for ${date}: $${revenue.totalRevenue}`;
+
+      this.snackBar.open(message, 'Close', {
+        duration: 8000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top'
+      });
+    });
+  }
+
+  fetchRevenueByMonth(year: number, month: number): void {
+    this.revenueService.getRevenueByMonth(year, month).subscribe(revenue => {
+      console.log('Revenue by month:', revenue);
+      const message = `Revenue for ${year}-${month.toString().padStart(2, '0')}: $${revenue.totalRevenue}`;
+
+      this.snackBar.open(message, 'Close', {
+        duration: 8000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top'
+      });
+    });
+  }
+
+  fetchRevenueByYear(year: number): void {
+    this.revenueService.getRevenueByYear(year).subscribe(revenue => {
+      console.log('Revenue by year:', revenue);
+      const message = `Revenue for year ${year}: $${revenue.totalRevenue}`;
+
+      this.snackBar.open(message, 'Close', {
+        duration: 8000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top'
+      });
+    });
   }
 
   openExportExcelDialog(): void {

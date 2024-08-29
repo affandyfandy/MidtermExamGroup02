@@ -1,5 +1,6 @@
 package MidtermExam.Group2.controller;
 
+import MidtermExam.Group2.dto.CustomerDTO;
 import MidtermExam.Group2.dto.ProductDTO;
 import MidtermExam.Group2.entity.Status;
 import MidtermExam.Group2.service.impl.ProductServiceImpl;
@@ -37,6 +38,12 @@ public class ProductController {
         return ResponseEntity.ok(products);
     }
 
+    @GetMapping("/list")
+    public ResponseEntity<List<ProductDTO>> getAllProductsList() {
+        List<ProductDTO> products = productService.getAllProductsList();
+        return ResponseEntity.ok(products);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<ProductDTO> getProductById(@PathVariable UUID id) {
         Optional<ProductDTO> product = productService.getProductById(id);
@@ -68,9 +75,15 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteProduct(@PathVariable UUID id) {
-        productService.deleteProduct(id);
-        return ResponseEntity.ok("Product successfully deleted");
+    public ResponseEntity<?> deleteProduct(@PathVariable UUID id) {
+        Optional<ProductDTO> product = productService.getProductById(id);
+
+        if (product.isPresent()) {
+            productService.deleteProduct(id);
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product not found.");
+        }
     }
 
     @PostMapping("/import")

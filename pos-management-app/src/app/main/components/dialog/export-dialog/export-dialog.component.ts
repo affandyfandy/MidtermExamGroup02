@@ -1,5 +1,5 @@
 import { Component, inject, Input, model, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { User } from '../../../../models/user.model';
 import { MatFormFieldModule, MatLabel } from '@angular/material/form-field';
 import { CustomerService } from '../../../../services/customer.service';
@@ -14,8 +14,8 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './export-dialog.component.html',
   styleUrl: './export-dialog.component.scss',
   imports: [
-    MatDialogModule, 
-    MatFormFieldModule, 
+    MatDialogModule,
+    MatFormFieldModule,
     MatLabel,
     MatSelectModule,
     MatButtonModule,
@@ -24,13 +24,13 @@ import { FormsModule } from '@angular/forms';
   ]
 })
 export class ExportDialogComponent implements OnInit {
-  
+
   readonly dialogRef = inject(MatDialogRef<ExportDialogComponent>);
 
   selectedCustomer: string | null = null;
   selectedMonth: number | null = null;
   selectedYear: number | null = null;
-  
+
   customers: any[] = [];
 
   constructor(private customerService: CustomerService) {}
