@@ -44,24 +44,21 @@ export class InvoiceEditComponent {
 
   updateInvoice(): void {
     this.invoice.updatedTime = getCurrentTimestamp();
-
-    // Iterate through the products and update them
     this.invoice.products.forEach((product: any) => {
       this.invoiceService.update(this.invoice.invoiceId, product.productId, product)
-        .subscribe(updatedProduct => {
-          this.invoiceUpdated.emit(updatedProduct);
-          alert("Invoice Updated");
-          this.router.navigate(['/invoices']);
-        }, error => {
-          console.error('Error updating product:', error);
+        .subscribe({
+          next: (updatedProduct) => {
+            this.invoiceUpdated.emit(updatedProduct);
+            alert("Invoice Updated");
+            this.router.navigate(['/invoice']);
+          },
+          error: (error) => {
+            console.error('Error updating product:', error);
+          }
         });
-
-      // Alerting the correct properties
-      alert(`Invoice ID: ${this.invoice.invoiceId}`);
-      alert(`Product ID: ${product.productId}`);
-      alert(`Quantity: ${product.quantity}`);
     });
   }
+
 
 
   deleteInvoice(): void {
