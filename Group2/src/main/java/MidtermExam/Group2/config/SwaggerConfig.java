@@ -22,7 +22,7 @@ public class SwaggerConfig {
     @Bean
     OpenAPI customOpenAPI() {
         return new OpenAPI()
-                .info(new Info().title("API Documentation").version("v1"))
+                .info(new Info().title("Point Of Sale System API Documentation").version("v1"))
                 .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
                 .components(
                         new Components()

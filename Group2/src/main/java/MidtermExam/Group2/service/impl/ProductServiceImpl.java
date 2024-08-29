@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -20,8 +21,10 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
@@ -36,6 +39,12 @@ public class ProductServiceImpl implements ProductService {
     public Page<ProductDTO> getAllProducts(Pageable pageable) {
         return productRepository.findAll(pageable).map(productMapper::toDTO);
     }
+
+    // @Override
+    // public Page<ProductDTO> getAllProducts(Pageable pageable) {
+    // Page<Product> products = productRepository.findAll(pageable);
+    // return products.map(productMapper::toDTO);
+    // }
 
     @Override
     public Optional<ProductDTO> getProductById(UUID id) {

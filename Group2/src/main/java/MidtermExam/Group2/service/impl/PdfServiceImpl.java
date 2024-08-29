@@ -10,11 +10,13 @@ import MidtermExam.Group2.dto.InvoiceDetailDTO;
 import MidtermExam.Group2.service.PdfService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
 @Service
+@Transactional
 public class PdfServiceImpl implements PdfService {
 
     @Autowired

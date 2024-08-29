@@ -10,8 +10,10 @@ import org.springframework.stereotype.Service;
 
 import MidtermExam.Group2.dto.RevenueDTO;
 import MidtermExam.Group2.repository.InvoiceRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class RevenueServiceImpl {
 
     private final InvoiceRepository invoiceRepository;

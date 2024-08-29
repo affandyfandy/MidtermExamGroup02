@@ -1,24 +1,24 @@
 package MidtermExam.Group2.service.impl;
 
 import MidtermExam.Group2.criteria.InvoiceSearchCriteria;
+import MidtermExam.Group2.dto.InvoiceAddDTO;
 import MidtermExam.Group2.dto.InvoiceDTO;
 import MidtermExam.Group2.dto.InvoiceDetailDTO;
 import MidtermExam.Group2.dto.InvoiceListDTO;
-import MidtermExam.Group2.entity.Invoice;
-import MidtermExam.Group2.entity.Customer;
+import MidtermExam.Group2.entity.*;
 import MidtermExam.Group2.entity.Invoice;
 import MidtermExam.Group2.mapper.InvoiceMapper;
-import MidtermExam.Group2.repository.CustomerRepository;
-import MidtermExam.Group2.repository.InvoiceRepository;
-import MidtermExam.Group2.repository.InvoiceSpecification;
+import MidtermExam.Group2.mapper.InvoiceProductMapper;
+import MidtermExam.Group2.repository.*;
 import MidtermExam.Group2.service.InvoiceService;
-import jakarta.transaction.Transactional;
-import java.util.Optional;
-import java.util.UUID;
+
+import java.util.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -31,15 +31,23 @@ import java.util.UUID;
 @Transactional
 public class InvoiceServiceImpl implements InvoiceService {
     private final InvoiceRepository invoiceRepository;
-    private final InvoiceMapper invoiceMapper;
     private final CustomerRepository customerRepository;
+    private final InvoiceProductRepository invoiceProductRepository;
+
+    private final InvoiceMapper invoiceMapper;
+    private final InvoiceProductMapper invoiceProductMapper;
+    private final ProductRepository productRepository;
 
     @Autowired
     public InvoiceServiceImpl(InvoiceRepository invoiceRepository, InvoiceMapper invoiceMapper,
-            CustomerRepository customerRepository) {
+                              CustomerRepository customerRepository, InvoiceProductRepository invoiceProductRepository,
+                              InvoiceProductMapper invoiceProductMapper, ProductRepository productRepository) {
         this.invoiceRepository = invoiceRepository;
         this.invoiceMapper = invoiceMapper;
         this.customerRepository = customerRepository;
+        this.invoiceProductRepository = invoiceProductRepository;
+        this.invoiceProductMapper = invoiceProductMapper;
+        this.productRepository = productRepository;
     }
 
     @Override
@@ -56,7 +64,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public InvoiceDTO addInvoice(InvoiceDTO invoiceDTO) {
+    public InvoiceDTO addSingleInvoice(InvoiceDTO invoiceDTO) {
         UUID customerId = invoiceDTO.getCustomerId();
         Optional<Customer> customerOpt = customerRepository.findById(customerId);
         if (customerOpt.isEmpty()) {
@@ -64,6 +72,10 @@ public class InvoiceServiceImpl implements InvoiceService {
         }
 
         Customer customer = customerOpt.get();
+
+        if (customer.getStatus().name().equals("INACTIVE")) {
+            throw new IllegalArgumentException("Customer is inactive");
+        }
 
         Invoice invoice = invoiceMapper.toInvoices(invoiceDTO);
 
@@ -82,6 +94,47 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
+    public InvoiceAddDTO addInvoice(InvoiceAddDTO invoiceAddDTO) {
+        UUID customerId = invoiceAddDTO.getCustomerId();
+        Optional<Customer> customerOpt = customerRepository.findById(customerId);
+        if (customerOpt.isEmpty()) {
+            throw new IllegalArgumentException("Customer not found");
+        }
+
+        Customer customer = customerOpt.get();
+
+        if (customer.getStatus().name().equals("INACTIVE")) {
+            throw new IllegalArgumentException("Customer is inactive");
+        }
+
+        Invoice invoice = invoiceMapper.toInvoice(invoiceAddDTO);
+        invoice.setCustomer(customer);
+        invoice.setInvoiceDate(LocalDateTime.of(invoiceAddDTO.getInvoiceDate(), LocalTime.MIDNIGHT));
+
+        if (invoice.getInvoiceAmount() == null) {
+            invoice.setInvoiceAmount(BigDecimal.ZERO);
+        }
+
+        Invoice savedInvoice = invoiceRepository.save(invoice);
+
+        List<InvoiceProduct> invoiceProducts = invoiceAddDTO.getProducts().stream()
+                .map(p -> {
+                    Product product = productRepository.findById(p.getProductId())
+                            .orElseThrow(() -> new RuntimeException("Product not found"));
+                    InvoiceProduct invoiceProduct = invoiceProductMapper.toInvoiceProduct(p, savedInvoice, product);
+                    invoiceProduct.setInvoice(savedInvoice);
+                    return invoiceProduct;
+                }).toList();
+
+        List<InvoiceProduct> savedInvoiceProducts = invoiceProductRepository.saveAll(invoiceProducts);
+
+        savedInvoice.setInvoiceProducts(savedInvoiceProducts);
+
+
+        return invoiceMapper.toInvoiceAddDTO(invoiceRepository.save(savedInvoice));
+    }
+
+    @Override
     public InvoiceDTO editInvoice(UUID id, InvoiceDTO invoiceDTO) {
         Invoice invoice = invoiceRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invoice not found"));
@@ -93,6 +146,10 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         Customer customer = customerRepository.findById(invoiceDTO.getCustomerId())
                 .orElseThrow(() -> new IllegalArgumentException("Customer not found"));
+
+        if (customer.getStatus().name().equals("INACTIVE")) {
+            throw new IllegalArgumentException("Customer is inactive");
+        }
 
         invoice.setCustomer(customer);
         invoice.setInvoiceDate(LocalDateTime.of(invoiceDTO.getInvoiceDate(), LocalTime.MIDNIGHT));
@@ -109,5 +166,10 @@ public class InvoiceServiceImpl implements InvoiceService {
         } else {
             throw new RuntimeException("Invoice not found");
         }
+    }
+
+    @Override
+    public void deleteInvoice(UUID id) {
+        invoiceRepository.deleteById(id);
     }
 }
