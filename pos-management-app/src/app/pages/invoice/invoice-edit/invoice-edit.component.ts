@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { InvoiceService } from '../../../services/invoice.service';
 import { Router } from '@angular/router'
 import { getCurrentTimestamp } from '../../../core/util/date-time.util';
+import { ProductService } from '../../../services/product.service';
 
 @Component({
   selector: 'app-invoice-edit',
@@ -19,6 +20,7 @@ export class InvoiceEditComponent {
   selectedProductIndex: number | null = null;
 
   constructor(private invoiceService: InvoiceService, private router: Router) {}
+
 
   onProductChange(index: number): void {
     this.selectedProductIndex = index;
@@ -42,15 +44,22 @@ export class InvoiceEditComponent {
 
   updateInvoice(): void {
     this.invoice.updatedTime = getCurrentTimestamp();
-
-    // Loop through each product and update individually
     this.invoice.products.forEach((product: any) => {
-      this.invoiceService.update(this.invoice.id, product.id, product)
-        .subscribe(updatedProduct => {
-          console.log(`Product ${updatedProduct.name} updated successfully`);
+      this.invoiceService.update(this.invoice.invoiceId, product.productId, product)
+        .subscribe({
+          next: (updatedProduct) => {
+            this.invoiceUpdated.emit(updatedProduct);
+            alert("Invoice Updated");
+            this.router.navigate(['/invoice']);
+          },
+          error: (error) => {
+            console.error('Error updating product:', error);
+          }
         });
     });
   }
+
+
 
   deleteInvoice(): void {
     if (confirm('Do you want to delete this data?')) {
