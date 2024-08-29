@@ -43,6 +43,10 @@ export class InvoiceAddComponent {
   ngOnInit(): void {
     this.loadCustomers();
     this.loadProducts();
+
+    this.invoiceForm.get('selectedProducts')?.valueChanges.subscribe(() => {
+      this.updateInvoiceAmount();
+    });
   }
 
   loadCustomers() {

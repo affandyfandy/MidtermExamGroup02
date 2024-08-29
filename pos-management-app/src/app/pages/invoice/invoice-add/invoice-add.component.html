@@ -22,7 +22,7 @@
         <ng-container [formGroup]="asFormGroup(selectedProduct)">
           <label>{{ getProductById(asFormGroup(selectedProduct).get('product_id')?.value)?.name }}</label>
           <br>
-          <input formControlName="quantity" type="number" class="product-control"/>
+          <input formControlName="quantity" type="number" class="product-control" />
           <br>
           <input formControlName="amount" type="number" [attr.disabled]="true" class="product-control"/>
           <button class="btn-remove" type="button" (click)="removeProduct(i)">Remove</button>
@@ -32,7 +32,7 @@
       <div>
         <label for="invoice_amount">Invoice Amount:</label>
         <br>
-        <input id="invoice_amount" formControlName="invoice_amount" type="number" [attr.disabled]="true" class="form-control"/>
+        <input name="invoice_amount" id="invoice_amount" formControlName="invoice_amount" type="number" [attr.disabled]="true" class="form-control"/>
       </div>
 
       <div class="btn">
