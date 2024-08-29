@@ -1,17 +1,55 @@
-label {
-  margin-right: 10px;
-  margin-bottom: 25px;
-  margin-left: 20px;
-  font-size: 16px;
+mat-card {
+  height: 400px;
+  overflow: auto;
+  padding: 25px;
+  box-sizing: border-box
 }
 
-mat-card {
-  height: 360px;
+.content {
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-bottom: 5px;
+}
+
+.form-control {
+  width: 340px;
+  padding: 5px;
+  box-sizing: border-box;
+}
+
+select.form-control,
+input.form-control {
+  display: inline-block;
+  width: 100%;
+  height: 35px;
+  padding: 5px 10px;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #495057;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  margin-bottom: 7px;
+}
+
+select.form-control:focus,
+input.form-control:focus {
+  border-color: #80bdff;
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+label {
+  margin-bottom: 5px;
+  font-size: 16px;
 }
 
 h5 {
   text-align: center;
-  margin-top: 15px;
 }
 
 .option {
@@ -20,30 +58,28 @@ h5 {
 
 .error-message {
   color: #bb3838;
-  margin-left: 20px;
-  margin-bottom: 20px;
+  margin-top: 5px;
 }
 
 .btn {
-  margin-left: 8px;
-  margin-bottom: 10px;
+  margin-top: 20px;
 }
 
 .btn-add {
   background-color: #38bb73;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: 500;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    width:120px;
-    height: 35px;
-    line-height: 26px;
-    margin-bottom: 10px;
-    margin-right: 10px;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width:120px;
+  height: 35px;
+  line-height: 26px;
+  margin-bottom: 10px;
+  margin-right: 10px;
 }
 
 .btn-add:hover {
@@ -53,19 +89,19 @@ h5 {
 
 .btn-cancel {
   background-color: #bb3838;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: 500;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    width:70px;
-    height: 35px;
-    line-height: 26px;
-    margin-bottom: 10px;
-    margin-right: 15px;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width:70px;
+  height: 35px;
+  line-height: 26px;
+  margin-bottom: 10px;
+  margin-right: 15px;
 }
 
 .btn-cancel:hover {

@@ -4,17 +4,20 @@
     <form [formGroup]="customerForm" (ngSubmit)="onSubmit()">
       <div>
         <label for="name">Name:</label>
-        <input id="name" formControlName="name" type="text" />
+        <br>
+        <input id="name" formControlName="name" type="text" class="form-control"/>
       </div>
 
       <div>
         <label for="phoneNumber">Phone Number:</label>
-        <input id="phoneNumber" formControlName="phoneNumber" type="text" />
+        <br>
+        <input id="phoneNumber" formControlName="phoneNumber" type="text" class="form-control"/>
       </div>
 
       <div>
         <label for="status">Status:</label>
-        <select id="status" formControlName="status" class="option">
+        <br>
+        <select id="status" formControlName="status" class="option" class="form-control">
           <option value="ACTIVE">ACTIVE</option>
           <option value="INACTIVE">INACTIVE</option>
         </select>
