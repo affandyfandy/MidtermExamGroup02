@@ -11,17 +11,20 @@ import { getCurrentTimestamp } from '../../../core/util/date-time.util';
 
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-alpine.css';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-product-list',
   standalone: true,
-  imports: [CommonModule, AgGridAngular, MatDialogModule],
+  imports: [CommonModule, AgGridAngular, MatDialogModule, MatSnackBarModule],
   templateUrl: './product-list.component.html',
   styleUrl: './product-list.component.scss',
   encapsulation: ViewEncapsulation.None
 })
 export class ProductListComponent implements OnInit {
   themeClass =  'ag-theme-alpine';
+
+  selectedFile: File | null = null;
 
   colDefs: ColDef[] = [
     { field: 'id', sortable: true, filter: true },
@@ -136,6 +139,19 @@ export class ProductListComponent implements OnInit {
         if (result === true) {
           this.loadProducts();
         }
+      });
+    }
+  }
+
+  onFileSelected(event: any): void {
+    this.selectedFile = event.target.files[0];
+  }
+
+  onUpload(): void {
+    if (this.selectedFile) {
+      this.productService.uploadFile(this.selectedFile).subscribe(() => {
+        alert('File uploaded successfully!');
+        this.loadProducts();
       });
     }
   }

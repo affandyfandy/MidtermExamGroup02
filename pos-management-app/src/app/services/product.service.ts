@@ -38,4 +38,10 @@ export class ProductService {
   delete(id: any): Observable<any> {
     return this.http.delete(`${baseUrl}/${id}`);
   }
+
+  uploadFile(file: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('file', file, file.name);
+    return this.http.post(baseUrl + '/import', formData, {responseType: 'text'});
+  }
 }
