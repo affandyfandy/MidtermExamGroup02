@@ -11,7 +11,7 @@ import { getCurrentTimestamp } from '../../../core/util/date-time.util';
 
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-alpine.css';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-product-list',
@@ -42,7 +42,7 @@ export class ProductListComponent implements OnInit {
       cellRenderer: (params: any) => {
         const isActive = params.value === 'ACTIVE';
         const switchId = `statusSwitch-${params.node.id}`;
-        
+
         return `<div class="form-switch row align-items-center">
             <input class="form-check-input col flex-grow-0" type="checkbox" role="switch" id="${switchId}" ${isActive ? 'checked' : ''}>
             <label class="form-check-label col" for="${switchId}">${params.value}</label>
@@ -80,7 +80,7 @@ export class ProductListComponent implements OnInit {
 
   rowData: any[] = [];
 
-  constructor(private productService: ProductService, private router: Router, private dialog: MatDialog) {
+  constructor(private productService: ProductService, private router: Router, private dialog: MatDialog, private snackBar: MatSnackBar) {
     ModuleRegistry.registerModules([ClientSideRowModelModule]);
   }
 
@@ -115,15 +115,21 @@ export class ProductListComponent implements OnInit {
       status: product.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE',
       updatedTime: getCurrentTimestamp()};
     this.productService.update(product.id, updatedProduct).subscribe(() => {
+      this.snackBar.open('Status changed successfully', 'Close', {
+        duration: 3000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top'
+      });
       this.loadProducts();
     });
   }
 
   deleteProduct(product: any): void {
     if (confirm(`Do you want to delete ${product.name}?`)) {
-      this.productService.delete(product.id).subscribe(() => {
-        alert("Product deleted!");
-        this.loadProducts();
+      this.snackBar.open('Product deleted!', 'Close', {
+        duration: 3000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top'
       });
     }
   }
@@ -150,7 +156,11 @@ export class ProductListComponent implements OnInit {
   onUpload(): void {
     if (this.selectedFile) {
       this.productService.uploadFile(this.selectedFile).subscribe(() => {
-        alert('File uploaded successfully!');
+        this.snackBar.open('File uploaded successfully!', 'Close', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top'
+        });
         this.loadProducts();
       });
     }

@@ -4,11 +4,12 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { ProductService } from '../../../services/product.service';
 import { MatCardModule } from '@angular/material/card';
 import { getCurrentTimestamp } from '../../../core/util/date-time.util';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-product-add',
   standalone: true,
-  imports: [ReactiveFormsModule, MatCardModule],
+  imports: [ReactiveFormsModule, MatCardModule, MatSnackBarModule],
   templateUrl: './product-add.component.html',
   styleUrl: './product-add.component.scss'
 })
@@ -18,7 +19,8 @@ export class ProductAddComponent {
   constructor(
     private fb: FormBuilder,
     private productService: ProductService,
-    private dialogRef: MatDialogRef<ProductAddComponent>
+    private dialogRef: MatDialogRef<ProductAddComponent>,
+    private snackBar: MatSnackBar
   ) {
     this.productForm = this.fb.group({
       name: ['', Validators.required],
@@ -36,7 +38,11 @@ export class ProductAddComponent {
       };
 
       this.productService.create(newProduct).subscribe(() => {
-        alert("Product added!");
+        this.snackBar.open('Product added!', 'Close', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top'
+        });
         this.dialogRef.close(true);
       });
     }

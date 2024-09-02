@@ -90,7 +90,11 @@ export class InvoiceListComponent {
   deleteInvoice(invoice: any): void {
     if (confirm(`Do you want to delete Invoice ID: ${invoice.id}?`)) {
       this.invoiceService.deleteInvoice(invoice.id).subscribe(() => {
-        alert("Invoice deleted!");
+        this.snackBar.open('Invoice deleted!', 'Close', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top'
+        });
         this.loadInvoices();
       });
     }

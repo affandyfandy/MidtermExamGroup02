@@ -65,7 +65,11 @@ export class InvoiceEditComponent implements OnChanges {
         .subscribe({
           next: (updatedProduct) => {
             this.invoiceUpdated.emit(updatedProduct);
-            alert("Invoice Updated");
+            this.snackBar.open('Invoice updated!', 'Close', {
+              duration: 3000,
+              horizontalPosition: 'center',
+              verticalPosition: 'top'
+            });
             this.router.navigate(['/invoice']);
           },
           error: (errorResponse: HttpErrorResponse) => {
@@ -88,7 +92,11 @@ export class InvoiceEditComponent implements OnChanges {
   deleteInvoice(): void {
     if (confirm('Do you want to delete this invoice?')) {
       this.invoiceService.deleteInvoice(this.invoice.invoiceId).subscribe(() => {
-        alert("Invoice deleted!");
+        this.snackBar.open('Invoice deleted!', 'Close', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top'
+        });
         this.router.navigate(['/invoice']);
       });
     }
