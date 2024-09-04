@@ -11,7 +11,7 @@ const baseUrl = 'http://localhost:3000/users';
 })
 export class LoginService {
   private isLoggedIn = false;
-  
+
   constructor(private http: HttpClient) {}
 
   login(username: string, password:string): Observable<boolean> {

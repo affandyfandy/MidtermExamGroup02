@@ -22,7 +22,7 @@ export class ProductAddComponent {
   ) {
     this.productForm = this.fb.group({
       name: ['', Validators.required],
-      price: ['', [Validators.required, Validators.min(0)]],
+      price: ['', [Validators.required, Validators.min(1.00)]],
       status: ['ACTIVE', Validators.required],
     });
   }
