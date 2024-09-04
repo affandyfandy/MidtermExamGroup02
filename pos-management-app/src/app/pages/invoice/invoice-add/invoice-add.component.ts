@@ -146,7 +146,11 @@ export class InvoiceAddComponent {
 
       this.invoiceService.create(newInvoice).subscribe({
         next: () => {
-          alert("Invoice added!");
+          this.snackBar.open('Invoice added!', 'Close', {
+            duration: 3000,
+            horizontalPosition: 'center',
+            verticalPosition: 'top'
+          });
           this.dialogRef.close(true);
         },
         error: (errorResponse: HttpErrorResponse) => {
