@@ -1,6 +1,5 @@
 package MidtermExam.Group2.controller;
 
-import MidtermExam.Group2.dto.InvoiceListDTO;
 import MidtermExam.Group2.dto.InvoiceProductDTO;
 import MidtermExam.Group2.service.InvoiceProductService;
 import jakarta.validation.Valid;
@@ -12,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 

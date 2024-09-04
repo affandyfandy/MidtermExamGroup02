@@ -1,6 +1,5 @@
 package MidtermExam.Group2.controller;
 
-import MidtermExam.Group2.dto.CustomerDTO;
 import MidtermExam.Group2.dto.ProductDTO;
 import MidtermExam.Group2.entity.Status;
 import MidtermExam.Group2.service.impl.ProductServiceImpl;
