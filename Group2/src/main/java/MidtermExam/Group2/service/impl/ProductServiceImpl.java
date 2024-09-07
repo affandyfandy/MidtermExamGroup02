@@ -21,6 +21,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -37,6 +38,14 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Page<ProductDTO> getAllProducts(Pageable pageable) {
         return productRepository.findAll(pageable).map(productMapper::toDTO);
+    }
+
+    @Override
+    public List<ProductDTO> getAllProductsList() {
+        List<Product> products = productRepository.findAll();
+        return products.stream()
+                .map(productMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
     @Override

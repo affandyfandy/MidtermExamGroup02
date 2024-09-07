@@ -1,10 +1,10 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { Invoice } from '../models/invoice';
-import { InvoiceProduct } from '../models/invoice-product';
 
-const baseUrl = 'http://localhost:3000/invoices';
+const baseUrl = 'http://localhost:8080/api/v1/invoices';
+const baseUrlProduct = 'http://localhost:8080/api/v1/invoice-products';
 
 @Injectable({
   providedIn: 'root'
@@ -12,31 +12,51 @@ const baseUrl = 'http://localhost:3000/invoices';
 export class InvoiceService {
   constructor(private http : HttpClient) {}
 
+  // getInvoices(): Observable<Invoice[]> {
+  //   return this.http.get<any>(baseUrl)
+  //     .pipe(map(response => response.content));
+  // }
+
   getInvoices(): Observable<Invoice[]> {
-    return this.http.get<Invoice[]>(`${baseUrl}`);
+    return this.http.get<any>(baseUrl + "/list")
+      .pipe(map(response => response));
   }
 
-  createInvoice(invoice: Invoice): Observable<Invoice> {
-    return this.http.post<Invoice>(`${baseUrl}`, invoice);
+  get(id: any): Observable<any> {
+    return this.http.get(`${baseUrl}/${id}`);
   }
 
-  createInvoiceProduct(invoiceProduct: InvoiceProduct): Observable<InvoiceProduct> {
-    return this.http.post<InvoiceProduct>(`${baseUrl}`, invoiceProduct);
+  update(invoiceId: any, productId: any, data: any): Observable<any> {
+    return this.http.put(`${baseUrlProduct}/${invoiceId}/${productId}`, data);
   }
 
-  get(id: any): Observable<Invoice> {
-    return this.http.get<Invoice>(`${baseUrl}/${id}`);
+  create(data: any): Observable<any> {
+    return this.http.post(baseUrl, data);
   }
 
-  deleteInvoice(id: string): Observable<void> {
+  deleteInvoice(id: any): Observable<void> {
     return this.http.delete<void>(`${baseUrl}/${id}`);
   }
 
-  update(id: any, data: any): Observable<any> {
-    return this.http.put(`${baseUrl}/${id}`, data);
+  exportInvoiceToExcel(customerId: string, month: number, year: number): Observable<Blob> {
+    let params = new HttpParams();
+
+    if (customerId) {
+      params = params.set('customerId', customerId);
+    }
+
+    if (month) {
+      params = params.set('month', month.toString());
+    }
+
+    if (year) {
+      params = params.set('year', year.toString());
+    }
+
+    return this.http.get(`${baseUrl}/excel`, { params, responseType: 'blob' });
   }
 
-  getInvoiceProducts(invoiceId: string): Observable<InvoiceProduct[]> {
-    return this.http.get<InvoiceProduct[]>(`${baseUrl}/${invoiceId}/products`);
+  exportInvoiceToPdf(id: any): Observable<Blob> {
+    return this.http.get(`${baseUrl}/${id}/pdf`, { responseType: 'blob' });
   }
 }

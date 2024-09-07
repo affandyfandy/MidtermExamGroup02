@@ -13,8 +13,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -36,6 +38,14 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    public List<CustomerDTO> getAllCustomersList() {
+        List<Customer> customers = customerRepository.findAll();
+        return customers.stream()
+                .map(customerMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public Optional<CustomerDTO> getCustomerById(UUID id) {
         return customerRepository.findById(id).map(customerMapper::toDTO);
     }
@@ -43,6 +53,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public CustomerDTO createCustomer(CustomerDTO customerDTO) {
         Customer customer = customerMapper.toEntity(customerDTO);
+        customer.setId(UUID.randomUUID());
         customer.setCreatedTime(LocalDateTime.now());
         customer.setUpdatedTime(LocalDateTime.now());
         customer = customerRepository.save(customer);
@@ -77,6 +88,5 @@ public class CustomerServiceImpl implements CustomerService {
     public void deleteCustomer(UUID id) {
         customerRepository.deleteById(id);
     }
-
 
 }

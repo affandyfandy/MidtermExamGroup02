@@ -18,6 +18,9 @@ public class InvoiceProductWithoutProductIdDTO {
     @NotNull(message = "Invoice id cannot be null")
     private UUID invoiceId;
 
+    @NotNull(message = "Invoice id cannot be null")
+    private UUID productId;
+
     @NotNull(message = "Product name cannot be null")
     private String productName;
 

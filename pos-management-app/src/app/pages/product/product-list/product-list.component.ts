@@ -11,17 +11,20 @@ import { getCurrentTimestamp } from '../../../core/util/date-time.util';
 
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-alpine.css';
+import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-product-list',
   standalone: true,
-  imports: [CommonModule, AgGridAngular, MatDialogModule],
+  imports: [CommonModule, AgGridAngular, MatDialogModule, MatSnackBarModule],
   templateUrl: './product-list.component.html',
   styleUrl: './product-list.component.scss',
   encapsulation: ViewEncapsulation.None
 })
 export class ProductListComponent implements OnInit {
   themeClass =  'ag-theme-alpine';
+
+  selectedFile: File | null = null;
 
   colDefs: ColDef[] = [
     { field: 'id', sortable: true, filter: true },
@@ -35,6 +38,20 @@ export class ProductListComponent implements OnInit {
         textCustomComparator: (filter: string, value: string, filterText: string) => {
           return value === filterText;
         }
+      },
+      cellRenderer: (params: any) => {
+        const isActive = params.value === 'ACTIVE';
+        const switchId = `statusSwitch-${params.node.id}`;
+
+        return `<div class="form-switch row align-items-center">
+            <input class="form-check-input col flex-grow-0" type="checkbox" role="switch" id="${switchId}" ${isActive ? 'checked' : ''}>
+            <label class="form-check-label col" for="${switchId}">${params.value}</label>
+          </div>`;
+      },
+      cellRendererParams: {
+        onStatusChange: (product: any) => {
+          product.status = product.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE';
+        }
       }
      },
     {
@@ -42,9 +59,6 @@ export class ProductListComponent implements OnInit {
       cellRenderer: (params: any) => {
         return `
           <button class="btn-edit" data-action="edit">Edit</button>
-          <button class="btn-toggle" data-action="toggle">
-            ${params.data.status === 'ACTIVE' ? 'Deactivate' : 'Activate'}
-          </button>
           <button class="btn-delete" data-action="delete">Delete</button>
         `;
       },
@@ -66,7 +80,7 @@ export class ProductListComponent implements OnInit {
 
   rowData: any[] = [];
 
-  constructor(private productService: ProductService, private router: Router, private dialog: MatDialog) {
+  constructor(private productService: ProductService, private router: Router, private dialog: MatDialog, private snackBar: MatSnackBar) {
     ModuleRegistry.registerModules([ClientSideRowModelModule]);
   }
 
@@ -84,10 +98,10 @@ export class ProductListComponent implements OnInit {
     const action = event.event.target.getAttribute('data-action');
     if (action === 'edit') {
       this.editProduct(event.data);
-    } else if (action === 'toggle') {
-      this.toggleProductStatus(event.data);
     } else if (action === 'delete') {
       this.deleteProduct(event.data);
+    } else if (event.colDef.field === 'status') {
+      this.toggleProductStatus(event.data);
     }
   }
 
@@ -101,15 +115,21 @@ export class ProductListComponent implements OnInit {
       status: product.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE',
       updatedTime: getCurrentTimestamp()};
     this.productService.update(product.id, updatedProduct).subscribe(() => {
+      this.snackBar.open('Status changed successfully', 'Close', {
+        duration: 3000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top'
+      });
       this.loadProducts();
     });
   }
 
   deleteProduct(product: any): void {
     if (confirm(`Do you want to delete ${product.name}?`)) {
-      this.productService.delete(product.id).subscribe(() => {
-        alert("Product deleted!");
-        this.loadProducts();
+      this.snackBar.open('Product deleted!', 'Close', {
+        duration: 3000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top'
       });
     }
   }
@@ -125,6 +145,23 @@ export class ProductListComponent implements OnInit {
         if (result === true) {
           this.loadProducts();
         }
+      });
+    }
+  }
+
+  onFileSelected(event: any): void {
+    this.selectedFile = event.target.files[0];
+  }
+
+  onUpload(): void {
+    if (this.selectedFile) {
+      this.productService.uploadFile(this.selectedFile).subscribe(() => {
+        this.snackBar.open('File uploaded successfully!', 'Close', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top'
+        });
+        this.loadProducts();
       });
     }
   }

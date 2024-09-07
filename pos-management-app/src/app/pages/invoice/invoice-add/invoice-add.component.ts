@@ -7,8 +7,9 @@ import { InvoiceService } from '../../../services/invoice.service';
 import { Product } from '../../../models/product.model';
 import { ProductService } from '../../../services/product.service';
 import { CustomerService } from '../../../services/customer.service';
-import { Customer } from '../../../models/customer.model';
 import { NgFor } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 export function stringToDate(timestamp: string): Date {
   return new Date(timestamp.replace(' ', 'T'));
@@ -31,24 +32,45 @@ export class InvoiceAddComponent {
     private invoiceService: InvoiceService,
     private productService: ProductService,
     private customerService: CustomerService,
-    private dialogRef: MatDialogRef<InvoiceAddComponent>
+    private dialogRef: MatDialogRef<InvoiceAddComponent>,
+    private snackBar: MatSnackBar
   ) {
     this.invoiceForm = this.fb.group({
-      id: [null, Validators.required],
       customer_id: ['', Validators.required],
       invoice_amount: [{ value: '', disabled: true }, [Validators.required, Validators.min(0)]],
-      selectedProducts: this.fb.array([]),
+      selectedProducts: this.fb.array([], this.validateProducts)  // Apply the custom validator here
     });
   }
 
   ngOnInit(): void {
     this.loadCustomers();
     this.loadProducts();
+
+    this.invoiceForm.get('selectedProducts')?.valueChanges.subscribe(() => {
+      this.updateInvoiceAmount();
+    });
+  }
+
+  validateProducts(formArray: AbstractControl): { [key: string]: boolean } | null {
+    const products = (formArray as FormArray).controls;
+    if (products.length === 0) {
+      return { noProducts: true };
+    }
+
+    const invalidQuantity = products.some(control => control.get('quantity')?.value <= 0);
+    if (invalidQuantity) {
+      return { invalidQuantity: true };
+    }
+
+    return null;
   }
 
   loadCustomers() {
     this.customerService.getAll().subscribe(customers => {
       this.customers = customers;
+      if (this.customers.length > 0) {
+        this.invoiceForm.get('customer_id')?.setValue(this.customers[0].id);
+      }
     });
   }
 
@@ -56,6 +78,19 @@ export class InvoiceAddComponent {
     this.productService.getAll().subscribe(products => {
       this.products = products;
     });
+  }
+
+  onProductSelect(event: Event) {
+    const selectedProductId = (event.target as HTMLSelectElement).value;
+    const product = this.products.find(p => p.id === selectedProductId);
+
+    if (product) {
+      this.addProduct(product);
+    }
+  }
+
+  getProductById(productId: string): Product | undefined {
+    return this.products.find(p => p.id === productId);
   }
 
   get selectedProducts(): FormArray {
@@ -94,43 +129,51 @@ export class InvoiceAddComponent {
       const selectedProducts = this.selectedProducts.controls.map((control) => {
         const product = this.products.find(p => p.id === control.get('product_id')?.value);
         return {
-          invoiceId: this.invoiceForm.value.id,
-          name: product.name,
+          productId: product.id,
+          productName: product.name,
           price: product.price,
           quantity: control.get('quantity')?.value,
           amount: control.get('quantity')?.value * product.price
         };
       });
 
-      const currentTimestamp = getCurrentTimestamp();
       const newInvoice = {
-        id: this.invoiceForm.value.id,
-        customer: {
-          id: customer.id,
-          name: customer.name,
-          phoneNumber: customer.phoneNumber,
-          status: customer.status
-        },
-        products: selectedProducts,
+        customerId: customer.id,
+        invoiceDate: getCurrentTimestamp().slice(0, 10),
         invoiceAmount: this.invoiceForm.get('invoice_amount')?.value,
-        createdTime: stringToDate(currentTimestamp),
-        updatedTime: stringToDate(currentTimestamp),
-        invoiceDate: currentTimestamp.slice(0, 10)
+        products: selectedProducts,
       };
 
-      this.invoiceService.createInvoice(newInvoice).subscribe(() => {
-        alert("Invoice added!");
-        this.dialogRef.close(true);
+      this.invoiceService.create(newInvoice).subscribe({
+        next: () => {
+          this.snackBar.open('Invoice added!', 'Close', {
+            duration: 3000,
+            horizontalPosition: 'center',
+            verticalPosition: 'top'
+          });
+          this.dialogRef.close(true);
+        },
+        error: (errorResponse: HttpErrorResponse) => {
+          if (errorResponse.error && errorResponse.error.errors) {
+            const errorMessage = errorResponse.error.errors;
+            this.snackBar.open(errorMessage, 'Close', {
+              duration: 4000,
+              horizontalPosition: 'center',
+              verticalPosition: 'top',
+              panelClass: 'snackbar'
+            });
+          } else {
+            console.log('Unexpected error structure:', errorResponse);
+          }
+        }
       });
     }
   }
-
 
   onCancel(): void {
     this.dialogRef.close(false);
   }
 
-  // Helper method to cast AbstractControl to FormGroup
   asFormGroup(control: AbstractControl): FormGroup {
     return control as FormGroup;
   }

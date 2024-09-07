@@ -10,11 +10,15 @@ import { Router } from '@angular/router';
 
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-alpine.css';
+import { ExportDialogComponent } from '../../../main/components/dialog/export-dialog/export-dialog.component';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { RevenueInputDialogComponent } from '../../../main/components/dialog/revenue-input-dialog/revenue-input-dialog.component';
+import { RevenueService } from '../../../services/revenue.service';
 
 @Component({
   selector: 'app-invoice-list',
   standalone: true,
-  imports: [CommonModule, AgGridAngular, MatDialogModule],
+  imports: [CommonModule, AgGridAngular, MatSnackBarModule],
   templateUrl: './invoice-list.component.html',
   styleUrls: ['./invoice-list.component.scss'],
   encapsulation: ViewEncapsulation.None
@@ -24,7 +28,7 @@ export class InvoiceListComponent {
 
   colDefs: ColDef[] = [
     { field: 'id', sortable: true, filter: true },
-    { headerName: 'Customer Name', valueGetter: (params) => params.data.customer.name, sortable: true, filter: 'agTextColumnFilter' },
+    { field: 'customerName', headerName: 'Customer Name', sortable: true, filter: 'agTextColumnFilter' },
     { field: 'invoiceAmount', headerName: 'Invoice Amount', sortable: true, filter: 'agNumberColumnFilter' },
     { field: 'invoiceDate', headerName: 'Invoice Date', sortable: true, filter: 'agDateColumnFilter' },
     {
@@ -54,7 +58,7 @@ export class InvoiceListComponent {
 
   rowData: any[] = [];
 
-  constructor(private invoiceService: InvoiceService, private router: Router, private dialog: MatDialog) {
+  constructor(private invoiceService: InvoiceService, private revenueService: RevenueService, private router: Router, private dialog: MatDialog, private snackBar: MatSnackBar) {
     ModuleRegistry.registerModules([ClientSideRowModelModule]);
   }
 
@@ -74,6 +78,8 @@ export class InvoiceListComponent {
       this.editInvoice(event.data);
     } else if (action === 'delete') {
       this.deleteInvoice(event.data);
+    } else if (action === 'pdf') {
+      this.exportInvoiceToPdf(event.data);
     }
   }
 
@@ -84,7 +90,11 @@ export class InvoiceListComponent {
   deleteInvoice(invoice: any): void {
     if (confirm(`Do you want to delete Invoice ID: ${invoice.id}?`)) {
       this.invoiceService.deleteInvoice(invoice.id).subscribe(() => {
-        alert("Invoice deleted!");
+        this.snackBar.open('Invoice deleted!', 'Close', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top'
+        });
         this.loadInvoices();
       });
     }
@@ -103,5 +113,113 @@ export class InvoiceListComponent {
         }
       });
     }
+  }
+
+  openRevenueInputDialog(): void {
+    const dialogRef = this.dialog.open(RevenueInputDialogComponent, {
+      width: '300px'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        if (result.date) {
+          this.fetchRevenueByDay(result.date);
+        } else if (result.year && result.month) {
+          this.fetchRevenueByMonth(result.year, result.month);
+        } else if (result.year) {
+          this.fetchRevenueByYear(result.year);
+        }
+      }
+    });
+  }
+
+  fetchRevenueByDay(date: string): void {
+    this.revenueService.getRevenueByDay(date).subscribe(revenue => {
+      console.log('Revenue by day:', revenue);
+      const message = `Revenue for ${date}: $${revenue.totalRevenue}`;
+
+      this.snackBar.open(message, 'Close', {
+        duration: 8000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top'
+      });
+    });
+  }
+
+  fetchRevenueByMonth(year: number, month: number): void {
+    this.revenueService.getRevenueByMonth(year, month).subscribe(revenue => {
+      console.log('Revenue by month:', revenue);
+      const message = `Revenue for ${year}-${month.toString().padStart(2, '0')}: $${revenue.totalRevenue}`;
+
+      this.snackBar.open(message, 'Close', {
+        duration: 8000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top'
+      });
+    });
+  }
+
+  fetchRevenueByYear(year: number): void {
+    this.revenueService.getRevenueByYear(year).subscribe(revenue => {
+      console.log('Revenue by year:', revenue);
+      const message = `Revenue for year ${year}: $${revenue.totalRevenue}`;
+
+      this.snackBar.open(message, 'Close', {
+        duration: 8000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top'
+      });
+    });
+  }
+
+  openExportExcelDialog(): void {
+    const dialogRef = this.dialog.open(ExportDialogComponent, { });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.invoiceService.exportInvoiceToExcel(result.customer, result.month, result.year).subscribe((blob) => {
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `invoice${result.customer? '-' + result.customer:''}${result.month? '-' + result.month:''}${result.year? '-' + result.year:''}.xlsx`;
+          a.click();
+
+          this.snackBar.open('Exported successfully!', 'Close', {
+            duration: 3000,
+            horizontalPosition: 'center',
+            verticalPosition: 'top'
+          });
+        },
+        (error) => {
+          this.snackBar.open('Export failed. Please try again', 'Close', {
+            duration: 3000,
+            horizontalPosition: 'center',
+            verticalPosition: 'top'
+          });
+        });
+      }
+    });
+  }
+
+  exportInvoiceToPdf(invoice: any): void {
+    this.invoiceService.exportInvoiceToPdf(invoice.id).subscribe((blob) => {
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `invoice-${invoice.id}.pdf`;
+      a.click();
+
+      this.snackBar.open('Exported successfully!', 'Close', {
+        duration: 3000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top'
+      });
+    }, (error) => {
+      this.snackBar.open('Export failed. Please try again', 'Close', {
+        duration: 3000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top'
+      });
+    });
   }
 }

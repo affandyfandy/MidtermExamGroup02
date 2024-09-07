@@ -1,5 +1,6 @@
 package MidtermExam.Group2.controller;
 
+import MidtermExam.Group2.dto.CustomerDTO;
 import MidtermExam.Group2.dto.ProductDTO;
 import MidtermExam.Group2.entity.Status;
 import MidtermExam.Group2.service.impl.ProductServiceImpl;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import jakarta.validation.Valid;
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -31,11 +33,14 @@ public class ProductController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<ProductDTO>> getAllProducts(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        Pageable pageable = PageRequest.of(page, size);
+    public ResponseEntity<Page<ProductDTO>> getAllProducts(Pageable pageable) {
         Page<ProductDTO> products = productService.getAllProducts(pageable);
+        return ResponseEntity.ok(products);
+    }
+
+    @GetMapping("/list")
+    public ResponseEntity<List<ProductDTO>> getAllProductsList() {
+        List<ProductDTO> products = productService.getAllProductsList();
         return ResponseEntity.ok(products);
     }
 
@@ -70,9 +75,15 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteProduct(@PathVariable UUID id) {
-        productService.deleteProduct(id);
-        return ResponseEntity.ok("Product successfully deleted");
+    public ResponseEntity<?> deleteProduct(@PathVariable UUID id) {
+        Optional<ProductDTO> product = productService.getProductById(id);
+
+        if (product.isPresent()) {
+            productService.deleteProduct(id);
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product not found.");
+        }
     }
 
     @PostMapping("/import")

@@ -14,7 +14,9 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -46,6 +48,12 @@ public class InvoiceController {
         return ResponseEntity.ok(invoiceService.getAllInvoices(pageable, criteria));
     }
 
+    @GetMapping("/list")
+    public ResponseEntity<List<InvoiceListDTO>> getAllInvoicesList(InvoiceSearchCriteria criteria) {
+        List<InvoiceListDTO> invoices = invoiceService.getAllInvoicesList(criteria);
+        return ResponseEntity.ok(invoices);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<?> getInvoiceDetail(@PathVariable("id") UUID invoiceId) {
         try {
@@ -67,6 +75,18 @@ public class InvoiceController {
             Map<String, String> response = new HashMap<>();
             response.put("errors", e.getMessage());
             return ResponseEntity.badRequest().body(response);
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteInvoice(@PathVariable UUID id) {
+        Optional<InvoiceDTO> invoice = Optional.ofNullable(invoiceService.getInvoiceById(id));
+
+        if (invoice.isPresent()) {
+            invoiceService.deleteInvoice(id);
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product not found.");
         }
     }
 

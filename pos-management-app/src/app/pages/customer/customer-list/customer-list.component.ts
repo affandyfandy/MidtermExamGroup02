@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { getCurrentTimestamp } from '../../../core/util/date-time.util';
 import { CustomerAddComponent } from '../customer-add/customer-add.component';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-alpine.css';
@@ -15,7 +16,7 @@ import '@ag-grid-community/styles/ag-theme-alpine.css';
 @Component({
   selector: 'app-customer-list',
   standalone: true,
-  imports: [CommonModule, AgGridAngular, MatDialogModule],
+  imports: [CommonModule, AgGridAngular, MatDialogModule, MatSnackBarModule],
   templateUrl: './customer-list.component.html',
   styleUrl: './customer-list.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -35,6 +36,20 @@ export class CustomerListComponent implements OnInit {
         textCustomComparator: (filter: string, value: string, filterText: string) => {
           return value === filterText;
         }
+      },
+      cellRenderer: (params: any) => {
+        const isActive = params.value === 'ACTIVE';
+        const switchId = `statusSwitch-${params.node.id}`;
+
+        return `<div class="form-switch row align-items-center">
+            <input class="form-check-input col flex-grow-0" type="checkbox" role="switch" id="${switchId}" ${isActive ? 'checked' : ''}>
+            <label class="form-check-label col" for="${switchId}">${params.value}</label>
+          </div>`;
+      },
+      cellRendererParams: {
+        onStatusChange: (customer: any) => {
+          customer.status = customer.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE';
+        }
       }
      },
     {
@@ -42,9 +57,6 @@ export class CustomerListComponent implements OnInit {
       cellRenderer: (params: any) => {
         return `
           <button class="btn-edit" data-action="edit">Edit</button>
-          <button class="btn-toggle" data-action="toggle">
-            ${params.data.status === 'ACTIVE' ? 'Deactivate' : 'Activate'}
-          </button>
           <button class="btn-delete" data-action="delete">Delete</button>
         `;
       },
@@ -66,7 +78,7 @@ export class CustomerListComponent implements OnInit {
 
   rowData: any[] = [];
 
-  constructor(private customerService: CustomerService, private router: Router, private dialog: MatDialog) {
+  constructor(private customerService: CustomerService, private router: Router, private dialog: MatDialog, private snackBar: MatSnackBar) {
     ModuleRegistry.registerModules([ClientSideRowModelModule]);
   }
 
@@ -84,10 +96,10 @@ export class CustomerListComponent implements OnInit {
     const action = event.event.target.getAttribute('data-action');
     if (action === 'edit') {
       this.editCustomer(event.data);
-    } else if (action === 'toggle') {
-      this.toggleCustomerStatus(event.data);
     } else if (action === 'delete') {
       this.deleteCustomer(event.data);
+    } else if (event.colDef.field === 'status') {
+      this.toggleCustomerStatus(event.data);
     }
   }
 
@@ -100,7 +112,12 @@ export class CustomerListComponent implements OnInit {
       ...customer,
       status: customer.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE',
       updatedTime: getCurrentTimestamp()};
-    this.customerService.update(customer.id, updatedCustomer).subscribe(() => {
+    this.customerService.changeStatus(customer.id, updatedCustomer).subscribe(() => {
+      this.snackBar.open('Status changed successfully', 'Close', {
+        duration: 3000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top'
+      });
       this.loadCustomers();
     });
   }
@@ -108,7 +125,11 @@ export class CustomerListComponent implements OnInit {
   deleteCustomer(customer: any): void {
     if (confirm(`Do you want to delete ${customer.name}?`)) {
       this.customerService.delete(customer.id).subscribe(() => {
-        alert("Customer deleted!");
+        this.snackBar.open('Customer deleted!', 'Close', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'top'
+        });
         this.loadCustomers();
       });
     }

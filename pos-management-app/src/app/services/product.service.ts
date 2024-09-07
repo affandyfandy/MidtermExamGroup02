@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { Product } from '../models/product.model';
 
-const baseUrl = 'http://localhost:3000/products';
+const baseUrl = 'http://localhost:8080/api/v1/products';
 
 @Injectable({
   providedIn: 'root'
@@ -11,8 +11,16 @@ const baseUrl = 'http://localhost:3000/products';
 export class ProductService {
   constructor(private http : HttpClient) {}
 
+  // getAll(): Observable<Product[]> {
+  //   return this.http.get<any>(baseUrl).pipe(
+  //     map(response => response.content)
+  //   );
+  // }
+
   getAll(): Observable<Product[]> {
-    return this.http.get<Product[]>(baseUrl);
+    return this.http.get<any>(baseUrl + "/list").pipe(
+      map(response => response)
+    );
   }
 
   get(id: any): Observable<Product> {
@@ -29,5 +37,11 @@ export class ProductService {
 
   delete(id: any): Observable<any> {
     return this.http.delete(`${baseUrl}/${id}`);
+  }
+
+  uploadFile(file: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('file', file, file.name);
+    return this.http.post(baseUrl + '/import', formData, {responseType: 'text'});
   }
 }

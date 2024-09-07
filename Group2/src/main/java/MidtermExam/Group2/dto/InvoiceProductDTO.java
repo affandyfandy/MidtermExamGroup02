@@ -19,6 +19,8 @@ public class InvoiceProductDTO {
     private UUID productId;
     private String productName;
 
+    private BigDecimal price;
+
     @Min(value = 1, message = "Quantity must be greater than 0")
     private int quantity;
 
